@@ -84,13 +84,16 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
     }
 
     @Override
-    public Optional<Sentence> getSentence(int hash, Words words) {
-        Document doc = collection.find(and(eq(hashKey, hash),
+    public List<Sentence> getSentences(int hash, Words words) {
+        List<Sentence> list = new ArrayList<>();
+        collection.find(and(eq(hashKey, hash),
                 eq(nounKey, words.getNoun()),
                 eq(verbKey, words.getVerb()),
                 eq(adjectiveKey, words.getAdjective()
-                ))).first();
-        return Optional.ofNullable(buildSentence(doc));
+                ))).forEach((Block<Document>) document -> {
+            list.add(buildSentence(document));
+        });
+        return list;
     }
 
     @Override
@@ -110,10 +113,9 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
         String noun = doc.getString(nounKey);
         String verb = doc.getString(verbKey);
         String adjective = doc.getString(adjectiveKey);
-        int hash = doc.getInteger(hashKey);
         long count = doc.getLong(showDisplayCountKey);
         Words words = new Words(noun, verb, adjective);
-        return new Sentence(id, words, hash, count);
+        return new Sentence(id, words, count);
     }
 
     public static int computeTextHash(String adjective, String nounWithVerb) {

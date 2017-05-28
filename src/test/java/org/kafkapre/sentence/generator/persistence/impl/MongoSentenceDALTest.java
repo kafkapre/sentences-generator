@@ -93,9 +93,18 @@ public class MongoSentenceDALTest {
     }
 
     @Test
-    public void getSentencesTest() {
+    public void getSentencesByHashTest() {
         Sentence[] stored = storeSentences("1", "2", "1", "3", "1");
-        List<Sentence> actual = client.getSentences(stored[0].getTextHash());
+        List<Sentence> actual = client.getSentences(stored[0].getWords().hashCode());
+
+        assertThat(actual).hasSize(3);
+        assertThat(actual).containsExactly(stored[0], stored[2], stored[4]);
+    }
+
+    @Test
+    public void getSentencesByHashAndWordsTest() {
+        Sentence[] stored = storeSentences("1", "2", "1", "3", "1");
+        List<Sentence> actual = client.getSentences(stored[0].getWords().hashCode(), stored[0].getWords());
 
         assertThat(actual).hasSize(3);
         assertThat(actual).containsExactly(stored[0], stored[2], stored[4]);

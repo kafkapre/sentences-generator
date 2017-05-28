@@ -126,10 +126,13 @@ public class SentenceController {
         Words words = new Words(noun, verb, adjective);
         words.validate();
 
-        Optional<Sentence> sentence = sentenceDAL.getSentence(words.hashCode(), words);
-        if (sentence.isPresent()) {
+        List<Sentence> sentences = sentenceDAL.getSentences(words.hashCode(), words);
+        if (!sentences.isEmpty()) {
             // TODO increment number;
-            return sentence.get();
+            if(sentences.size() > 0){
+                // TODO log warning;
+            }
+            return sentences.get(0);
         }
 
         return sentenceDAL.createAndStoreSentence(words);

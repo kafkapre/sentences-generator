@@ -15,7 +15,7 @@ public interface SentenceDAL {
     boolean incrementSentenceShowDisplayCount(ObjectId id);
     Optional<Sentence> getSentence(ObjectId id);
     List<Sentence> getSentences(int hash);
-    Optional<Sentence> getSentence(int hash, Words words);
+    List<Sentence> getSentences(int hash, Words words);
     List<Sentence> getAllSentences();
 
 }

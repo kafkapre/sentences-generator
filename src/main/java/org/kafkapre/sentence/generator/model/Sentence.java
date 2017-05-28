@@ -20,26 +20,20 @@ public class Sentence {
     }
 
     private final ObjectId id;
-    private final int textHash;
     private final Words words;
     private final long showDisplayCount;
 
-    public Sentence(ObjectId id, Words words, int textHash, long showDisplayCount){
+    public Sentence(ObjectId id, Words words, long showDisplayCount){
         Validate.notNull(id);
         Validate.notNull(words);
 
         this.id = id;
         this.words = words;
-        this.textHash = textHash;
         this.showDisplayCount = showDisplayCount;
     }
 
     public ObjectId getId() {
         return id;
-    }
-
-    public int getTextHash() {
-        return textHash;
     }
 
     public Words getWords() {
@@ -65,4 +59,32 @@ public class Sentence {
 //    }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Sentence)) {
+            return false;
+        }
+
+        Sentence sentence = (Sentence) o;
+
+        if (showDisplayCount != sentence.showDisplayCount) {
+            return false;
+        }
+        if (id != null ? !id.equals(sentence.id) : sentence.id != null) {
+            return false;
+        }
+        return words != null ? words.equals(sentence.words) : sentence.words == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (words != null ? words.hashCode() : 0);
+        result = 31 * result + (int) (showDisplayCount ^ (showDisplayCount >>> 32));
+        return result;
+    }
 }
