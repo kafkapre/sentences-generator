@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- (C) Copyright 2014-2016 Hewlett Packard Enterprise Development LP -->
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/task
+    http://www.springframework.org/schema/task/spring-task-3.1.xsd">
+
+    <bean id="configuration"  class="org.kafkapre.sentence.generator.AppConfiguration"/>
+
+    <bean id="mongoConnecotFactory" class="org.kafkapre.sentence.generator.persistence.impl.MongoConnectorFactory"
+          autowire="constructor" />
+
+    <bean id="mongoClient" factory-bean="mongoConnecotFactory" factory-method="create"/>
+
+    <bean id="mongoSentenceDAL" class="org.kafkapre.sentence.generator.persistence.impl.MongoSentenceDAL"
+          autowire="constructor" />
+
+    <bean id="mongoWordDAL" class="org.kafkapre.sentence.generator.persistence.impl.MongoWordDAL"
+          autowire="constructor" />
+
+
+
+
+
+    <!--<context:annotation-config/>-->
+    <!--<context:property-placeholder/>-->
+
+    <!--&lt;!&ndash; Redis Repo &ndash;&gt;-->
+    <!--<import resource="classpath:/META-INF/spring/ddd-persistence-redis-private-context.xml"/>-->
+
+    <!--&lt;!&ndash;Postgres persistence&ndash;&gt;-->
+    <!--<import resource="classpath:/META-INF/spring/ddd-persistence-postgres-public-context.xml"/>-->
+
+    <!--&lt;!&ndash; Serializations &ndash;&gt;-->
+    <!--<import resource="classpath:/META-INF/spring/ddd-model-serialization-private-context.xml"/>-->
+
+    <!-- VirtualLabService -->
+    <!-- <bean name="server.cluster.learning-VirtualLabService" class="com.hpe.sv.lab.service.VirtualLabServiceImpl" autowire="constructor" /> -->
+
+    <!-- Services for Reporting -->
+    <!-- <import resource="classpath:/META-INF/spring/lab-reporting-service-private-context.xml"/>
+    <bean name="server.cluster.learning-LabChangeTaskConsumer" class="com.hp.sv.cluster.learning.LabChangeTaskConsumer" autowire="constructor" />
+    <bean name="server.cluster.learning-ReportingOutput" class="com.hp.sv.cluster.learning.ClusterLabReportingOutput" autowire="constructor" />
+    <bean name="server.cluster.learning-LabChangeTaskWatcher" factory-bean="lab.service.cluster-LabChangeTaskStore" factory-method="createLabChangeWatcher">
+        <constructor-arg>
+            <bean class="org.hpe.sv.model.lab.VirtualLabId">
+                <constructor-arg value="${sv.labId}"></constructor-arg>
+            </bean>
+        </constructor-arg>
+        <constructor-arg ref="server.cluster.learning-LabChangeTaskConsumer" />
+    </bean> -->
+
+    <!-- Lab/Learning Services -->
+    <!--<import resource="classpath:/META-INF/spring/lab-service-etcd-private-context.xml"/>-->
+    <!--<import resource="classpath:/META-INF/spring/learning-service-private-context.xml"/>-->
+    <!--<import resource="classpath:/META-INF/spring/learning-service-common-private-context.xml"/>-->
+
+    <!--<bean name="server.cluster.learning-LearningTaskConsumer" class="com.hp.sv.cluster.learning.LearningTaskConsumer" autowire="constructor" />-->
+
+    <!--<bean name="server.cluster.learning-LearningTaskWatcher" factory-bean="lab.service.cluster-LearningTaskStore" factory-method="createLabLearningWatcher">-->
+        <!--<constructor-arg>-->
+            <!--<bean class="org.hpe.sv.model.lab.VirtualLabId">-->
+                <!--<constructor-arg value="${sv.labId}"></constructor-arg>-->
+            <!--</bean>-->
+        <!--</constructor-arg>-->
+        <!--<constructor-arg ref="server.cluster.learning-LearningTaskConsumer" />-->
+    <!--</bean>-->
+
+</beans>
