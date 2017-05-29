@@ -11,12 +11,12 @@ You can input any word to the system but you need to specify its part of speech 
  >- Git
  >- MongoDB
 
-Tested on Ubuntu 64bit, OpenJdk 1.8, Maven 3.3.9., Git 1.9.1, MondgDB 3.4
+Tested on Ubuntu 64bit, OpenJdk 1.8, Maven 3.3.9., Git 1.9.1, MongoDB 3.4
 
 #### Download project
 
 ```
-git clone https://github.com/kafkapre/pig-latin-translator.git // TODO
+git clone https://github.com/kafkapre/sentences-generator
 ```
 
 #### How to build
@@ -28,7 +28,7 @@ mvn package -DskipTests
 ```
 
 #### How to run tests
-You have to run MongoDB locally (listening at port 27017) at first. You can start it by Docker command:
+You have to run MongoDB locally (listening at port 27017) at first. E.g. you can start it by Docker command:
 
 ```
 docker run --name mongo -p 27017:27017 -d mongo:3.4
@@ -62,18 +62,22 @@ app:
 
 #### Root endpoint
 
-GET /api
+##### GET /api
+Returns root api paths.
+
 ```
 {
     "wordsPath":"/words",
     "sentencesPath":"/sentences"
 }
+```
 
 
 #### Words endpoint
 
-```
-GET /api/words
+##### GET /api/words
+Returns all words.
+
 ```
 {[
     {
@@ -87,7 +91,8 @@ GET /api/words
 ]}
 ```
 
-GET /api/words/{word}
+##### GET /api/words/{word}
+Returns particular word
 
 ```
 {
@@ -98,16 +103,22 @@ GET /api/words/{word}
 ```
 
 
-GET /api/words/refused
+##### GET /api/words/refused
+Returns list of words which will be refused.
 ```
 {
     ["aaaa", "bbbb"] 
 }
 ```
 
-PUT /api/words/{word}
+##### PUT /api/words/{word}
+Sets word 
 
- - Request
+Response statuses:
+>- 200 - Word was set
+>- 405 - Word was refused
+ 
+ - Request body
 
 ```
 {    
@@ -115,7 +126,7 @@ PUT /api/words/{word}
 }
 ```
 
- - Response
+ - Response body
 ```
 {
     "word":"{word}",
@@ -127,7 +138,8 @@ PUT /api/words/{word}
 
 #### Words endpoint
 
-GET /sentences
+##### GET /sentences
+Returns all generated sentences
 
 ```
 [
@@ -139,7 +151,8 @@ GET /sentences
 ]
 ```
 
-GET /sentences/{sentenceID}
+##### GET /sentences/{sentenceID}
+Returns particular generated sentence
 
 ```
 {
@@ -151,7 +164,8 @@ GET /sentences/{sentenceID}
 }
 ```
 
-###### GET /sentences/{sentenceID}/yodaTalk
+##### GET /sentences/{sentenceID}/yodaTalk
+Returns particular generated sentence in yoda talk format
 
 ```
 {
