@@ -1,1 +1,182 @@
 # sentences-generator
+
+
+### Description
+A simple webapp exposing REST API acting as a generator of the sentences from the words inserted to it by rules described below. 
+You can input any word to the system but you need to specify its part of speech - NOUN or VERB or OBJECTIVE.
+
+### Prerequisites
+ >- Maven
+ >- Java 8 (Jdk)
+ >- Git
+ >- MongoDB
+
+Tested on Ubuntu 64bit, OpenJdk 1.8, Maven 3.3.9., Git 1.9.1, MondgDB 3.4
+
+#### Download project
+
+```
+git clone https://github.com/kafkapre/pig-latin-translator.git // TODO
+```
+
+#### How to build
+
+Go to project's directory and run command:
+
+```
+mvn package -DskipTests
+```
+
+#### How to run tests
+You have to run MongoDB locally (listening at port 27017) at first. You can start it by Docker command:
+
+```
+docker run --name mongo -p 27017:27017 -d mongo:3.4
+```
+
+Then you can run test by command:
+```
+mvn test
+```
+
+#### How to run application
+
+For example go to project's "target" directory and run command:
+
+```
+java -jar sentence-generator-1.0.jar --spring.config.location=app.yml
+```
+
+### Property file
+```
+server:
+  port: 8080                            # webapp port
+app:
+  mongoHost: localhost                  # host of MongoDB server
+  mongoPort: 27017                      # port of MongoDB server
+  rejectedWords: ['aaaa', 'bbbb']       # list of words which which will be refused by server                         
+```
+
+
+### Rest API
+
+#### Root endpoint
+
+GET /api
+```
+{
+    "wordsPath":"/words",
+    "sentencesPath":"/sentences"
+}
+
+
+#### Words endpoint
+
+```
+GET /api/words
+```
+{[
+    {
+        "href":"api/words/home",
+        "word":"home"
+    },
+    {
+        "href":"api/words/and",
+        "word":"and"
+    }
+]}
+```
+
+GET /api/words/{word}
+
+```
+{
+    "word":"car",
+    "href":"api/words/car",
+    "category":"NOUN"
+}
+```
+
+
+GET /api/words/refused
+```
+{
+    ["aaaa", "bbbb"] 
+}
+```
+
+PUT /api/words/{word}
+
+ - Request
+
+```
+{    
+    "category":"NOUN"
+}
+```
+
+ - Response
+```
+{
+    "word":"{word}",
+    "href": "api/words/{word}",
+    "category":"NOUN"
+}
+```
+
+
+#### Words endpoint
+
+GET /sentences
+
+```
+[
+    {
+        "id": "592c7d9e9e3db06eda819f4d",
+        "href": "api/sentences/592c7d9e9e3db06eda819f4d",
+        "text": "car is new"
+    }
+]
+```
+
+GET /sentences/{sentenceID}
+
+```
+{
+    "id": "592c7d9e9e3db06eda819f4d",
+    "href": "api/sentences/592c7d9e9e3db06eda819f4d",
+    "text": "car is new",
+    "showDisplayCount": 1,
+    "generatedTimestampSec": 1496087966
+}
+```
+
+###### GET /sentences/{sentenceID}/yodaTalk
+
+```
+{
+    "id": "592c7d9e9e3db06eda819f4d",
+    "href": "api/sentences/592c7d9e9e3db06eda819f4d",
+    "text": "new car is"
+}
+```
+
+
+##### POST /sentences/generate (call without request body)
+Generates random sentence.
+
+Response statuses:
+>- 201 - Sentence was created
+>- 409 - Same sentence was already created. Returns previously created sentence and increments field "sameGeneratedCount".
+ 
+ - Response
+ 
+```
+{
+    "id": "592c7d9e9e3db06eda819f4d",
+    "href": "api/sentences/592c7d9e9e3db06eda819f4d",
+    "text": "car is new",
+    "showDisplayCount": 0,
+    "generatedTimestampSec": 1496087966
+}
+```

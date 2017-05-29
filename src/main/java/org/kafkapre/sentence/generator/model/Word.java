@@ -36,7 +36,6 @@ public class Word {
         this.category = category;
     }
 
-
     public String getText() {
         return text;
     }
@@ -44,7 +43,6 @@ public class Word {
     public void setText(String text) {
         this.text = text;
     }
-
 
     public WordCategory getCategory() {
         return category;

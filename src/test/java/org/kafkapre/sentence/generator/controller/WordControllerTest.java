@@ -95,6 +95,8 @@ public class WordControllerTest extends AbstractMongoDbTest {
         assertThatJson(response.getBody()).isEqualTo(expected);
     }
 
+    // TODO put with ok json  and bad one
+
     @Test
     public void putRejectedWordTest() throws Exception {
         assertThat(configuration.getRejectedWords()).isNotEmpty();
