@@ -13,13 +13,13 @@ You can input any word to the system but you need to specify its part of speech 
 
 Tested on Ubuntu 64bit, OpenJdk 1.8, Maven 3.3.9., Git 1.9.1, MongoDB 3.4
 
-#### Download project
+### Download project
 
 ```
 git clone https://github.com/kafkapre/sentences-generator
 ```
 
-#### How to build
+### How to build
 
 Go to project's directory and run command:
 
@@ -27,8 +27,11 @@ Go to project's directory and run command:
 mvn package -DskipTests
 ```
 
-#### How to run tests
+### How to run tests
 You have to run MongoDB locally (listening at port 27017) at first. E.g. you can start it by Docker command:
+
+**!!! Important note: please be aware that test running clears repositories. 
+It can happen that your data stored before will be deleted after tests run.** 
 
 ```
 docker run --name mongo -p 27017:27017 -d mongo:3.4
@@ -39,10 +42,7 @@ Then you can run test by command:
 mvn test
 ```
 
-**!!! Important note: please be aware that test running clears repositories. 
-It can happen that your data stored before will be deleted after tests run.** 
-
-#### How to run application
+### How to run application
 
 For example go to project's "target" directory and run command:
 
