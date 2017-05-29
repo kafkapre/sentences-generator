@@ -12,56 +12,64 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
 import org.bson.Document;
-import org.kafkapre.sentence.generator.persistence.impl.AbstractMongoDAL;
-import org.kafkapre.sentence.generator.persistence.impl.MongoSentenceDAL;
 
 import static org.kafkapre.sentence.generator.persistence.impl.AbstractMongoDAL.databaseName;
 
 public abstract class AbstractMongoDbTest {
 
-    /**
-     * please store Starter or RuntimeConfig in a static final field
-     * if you want to use artifact store caching (or else disable caching)
+    protected final static int mongoPort = 27017;
+    protected final static String mongoHost = "localhost";
+
+    /*
+     @Note: Not used because it causes troubles, needs more investigation
      */
-    private static final MongodStarter starter = MongodStarter.getDefaultInstance();
+    static class  MongoInstance {
 
-    private MongodExecutable _mongodExe;
-    private MongodProcess _mongod;
+        private static final MongoInstance instance = new MongoInstance();
 
-    private MongoClient _mongo;
+        private static final MongodStarter starter = MongodStarter.getDefaultInstance();
+
+        private MongodExecutable _mongodExe;
+        private MongodProcess _mongod;
+
+        private MongoClient _mongo;
+
+        public static MongoInstance getInstance(){
+            return instance;
+        }
+
+        protected void startEmbeddedMongo(int port) throws Exception {
+
+            _mongodExe = starter.prepare(new MongodConfigBuilder()
+                    .version(Version.Main.PRODUCTION)
+                    .net(new Net("localhost", port, Network.localhostIsIPv6()))
+                    .build());
+            _mongod = _mongodExe.start();
 
 
-    protected void startEmbeddedMongo() throws Exception {
+            _mongo = new MongoClient("localhost", port);
+        }
 
-        _mongodExe = starter.prepare(new MongodConfigBuilder()
-                .version(Version.Main.PRODUCTION)
-                .net(new Net("localhost", 12345, Network.localhostIsIPv6()))
-                .build());
-        _mongod = _mongodExe.start();
+        protected void stopEmbeddedMongo() throws Exception {
 
+            _mongod.stop();
+            _mongodExe.stop();
+        }
 
-        _mongo = new MongoClient("localhost", 12345);
+        public Mongo getMongo() {
+            return _mongo;
+        }
     }
 
-    protected void stopEmbeddedMongo() throws Exception {
-
-        _mongod.stop();
-        _mongodExe.stop();
-    }
-
-    public Mongo getMongo() {
-        return _mongo;
-    }
-
-    protected MongoCollection<Document> createTestLocalClient(String collectionName) {
-        MongoClient mongoClient = new MongoClient("localhost", 27017);
+    protected MongoCollection<Document> createTestLocalClient(String collectionName, int port) {
+        MongoClient mongoClient = new MongoClient(mongoHost, port);
         MongoDatabase database = mongoClient.getDatabase(databaseName);
         return database.getCollection(collectionName);
     }
 
 
-    protected void clearDatabase() {
-        MongoClient mongoClient = new MongoClient("localhost", 27017);
+    protected void clearDatabase(int port) {
+        MongoClient mongoClient = new MongoClient(mongoHost, port);
         MongoDatabase database = mongoClient.getDatabase(AbstractMongoDAL.databaseName);
 
         MongoCollection<Document> wordCollection = database.getCollection(MongoWordDAL.collectionName);

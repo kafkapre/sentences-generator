@@ -1,13 +1,11 @@
 package org.kafkapre.sentence.generator.controller;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kafkapre.sentence.generator.App;
 import org.kafkapre.sentence.generator.AppConfiguration;
 import org.kafkapre.sentence.generator.model.Word;
-import org.kafkapre.sentence.generator.model.WordCategory;
 import org.kafkapre.sentence.generator.persistence.impl.AbstractMongoDbTest;
 import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +24,13 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kafkapre.sentence.generator.controller.RestPaths.rootPath;
 import static org.kafkapre.sentence.generator.controller.RestPaths.sentencesPath;
-import static org.kafkapre.sentence.generator.controller.RestPaths.wordPath;
+import static org.kafkapre.sentence.generator.controller.RestPaths.wordsPath;
 import static org.kafkapre.sentence.generator.controller.SentenceController.resourceHrefHeaderName;
 import static org.kafkapre.sentence.generator.model.WordCategory.ADJECTIVE;
 import static org.kafkapre.sentence.generator.model.WordCategory.NOUN;
 import static org.kafkapre.sentence.generator.model.WordCategory.VERB;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
@@ -57,17 +53,10 @@ public class SentenceControllerTest extends AbstractMongoDbTest {
 
     @Before
     public void startup() throws Exception {
-        clearDatabase();
+        clearDatabase(configuration.getMongoPort());
 
         restTemplate = new TestRestTemplate();
         headers = new HttpHeaders();
-
-//       super.setUp();
-    }
-
-    @After
-    public void shutdown() throws Exception {
-//        super.tearDown();
     }
 
     @Test
@@ -170,13 +159,10 @@ public class SentenceControllerTest extends AbstractMongoDbTest {
         putWord(new Word("is", VERB));
         putWord(new Word("new", ADJECTIVE));
 
-        ResponseEntity<String> resp = postNewSentence();
+        postNewSentence();
 
-
-        resp = getSentences();
+        ResponseEntity<String> resp = getSentences();
         assertThat(resp.getStatusCode()).isEqualTo(OK);
-
-        System.out.println("----- " + resp.getBody());
 
 
         assertThat(resp.getStatusCode()).isEqualTo(OK);
@@ -345,7 +331,7 @@ public class SentenceControllerTest extends AbstractMongoDbTest {
     }
 
     private String createWordURLWithPort(String id) {
-        return "http://localhost:" + port + "/" + rootPath + wordPath + "/" + id;
+        return "http://localhost:" + port + "/" + rootPath + wordsPath + "/" + id;
     }
 
 }

@@ -4,7 +4,9 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kafkapre.sentence.generator.model.BaseSentence;
 import org.kafkapre.sentence.generator.model.Sentence;
@@ -21,18 +23,20 @@ public class MongoSentenceDALTest extends AbstractMongoDbTest {
 
     private SentenceDAL client;
 
+
+
+
     @Before
     public void setup() {
-        clearDatabase();
+        clearDatabase(mongoPort);
 
-        MongoClient mongoClient = new MongoClient("localhost", 27017);
+        MongoClient mongoClient = new MongoClient(mongoHost, mongoPort);
         client = new MongoSentenceDAL(mongoClient);
     }
 
-
     @Test
     public void indexesTest() throws InterruptedException {
-        MongoCollection<Document> collection = createTestLocalClient(MongoSentenceDAL.collectionName);
+        MongoCollection<Document> collection = createTestLocalClient(MongoSentenceDAL.collectionName, mongoPort);
 
         boolean found = false;
         for (Document d : collection.listIndexes()) {

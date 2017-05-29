@@ -3,7 +3,6 @@ package org.kafkapre.sentence.generator.persistence.impl;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.kafkapre.sentence.generator.model.Word;
@@ -27,20 +26,15 @@ public class MongoWordDALTest extends AbstractMongoDbTest {
 
     @Before
     public void setup() {
-        clearDatabase();
+        clearDatabase(mongoPort);
 
-        MongoClient mongoClient = new MongoClient("localhost", 27017);
+        MongoClient mongoClient = new MongoClient(mongoHost, mongoPort);
         client = new MongoWordDAL(mongoClient);
-    }
-
-    @AfterClass
-    public static void destroy() throws Exception {
-//        stopEmbeddedMongo();
     }
 
     @Test
     public void indexesTest() throws InterruptedException {
-        MongoCollection<Document> collection = createTestLocalClient(MongoWordDAL.collectionName);
+        MongoCollection<Document> collection = createTestLocalClient(MongoWordDAL.collectionName, mongoPort);
 
         boolean textIndexFound = false;
         boolean categoryIndexFound = false;
@@ -145,12 +139,12 @@ public class MongoWordDALTest extends AbstractMongoDbTest {
         return storeWords(count, false);
     }
 
-    private List<Word> storeWords(int count,boolean withoutCategory) {
+    private List<Word> storeWords(int count, boolean withoutCategory) {
         List<Word> words = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            if(withoutCategory){
+            if (withoutCategory) {
                 words.add(new Word("w" + i));
-            }else {
+            } else {
                 WordCategory c = (i % 2 == 0) ? ADJECTIVE : VERB;
                 words.add(new Word("w" + i, c));
             }

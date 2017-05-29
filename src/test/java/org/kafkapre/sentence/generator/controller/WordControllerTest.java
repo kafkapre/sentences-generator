@@ -22,13 +22,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kafkapre.sentence.generator.controller.RestPaths.rootPath;
-import static org.kafkapre.sentence.generator.controller.RestPaths.wordPath;
+import static org.kafkapre.sentence.generator.controller.RestPaths.wordsPath;
 import static org.kafkapre.sentence.generator.model.WordCategory.ADJECTIVE;
 import static org.kafkapre.sentence.generator.model.WordCategory.NOUN;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
-
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = App.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -46,7 +45,7 @@ public class WordControllerTest extends AbstractMongoDbTest {
 
     @Before
     public void startup() throws Exception {
-        clearDatabase();
+        clearDatabase(configuration.getMongoPort());
 
         restTemplate = new TestRestTemplate();
         headers = new HttpHeaders();
@@ -168,7 +167,7 @@ public class WordControllerTest extends AbstractMongoDbTest {
         if(uri.length() > 0){
             uri = "/" + uri;
         }
-        return "http://localhost:" + port + "/" + rootPath + wordPath + uri ;
+        return "http://localhost:" + port + "/" + rootPath + wordsPath + uri ;
     }
 
 }

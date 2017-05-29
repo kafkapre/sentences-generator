@@ -1,0 +1,6 @@
+server:
+  port: 8090
+app:
+  mongoHost: localhost
+  mongoPort: 27017
+  rejectedWords: ['aaaa', 'bbbb']

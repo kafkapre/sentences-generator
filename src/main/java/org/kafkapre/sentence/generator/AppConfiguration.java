@@ -1,5 +1,6 @@
 package org.kafkapre.sentence.generator;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
@@ -10,26 +11,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-//@Component
-//@PropertySource("classpath:app.yml")
-//@ConfigurationProperties("app") // prefix app, find app.* values
-@ConfigurationProperties(prefix="my")
+@ConfigurationProperties("app")
 public class AppConfiguration {
 
-
-    private List<String> servers = new ArrayList<>();
-
-//    @NotEmpty
-    private String email;
-
+    @NotEmpty
     private String mongoHost = "localhost";
 
     private int mongoPort = 27017;
 
-    private Set<String> rejectedWords = new HashSet<>();
+    private List<String> rejectedWords = new ArrayList<>();
     {
         rejectedWords.add("aadf");
-        rejectedWords.add("aadfj");
     }
 
     public String getMongoHost() {
@@ -40,19 +32,24 @@ public class AppConfiguration {
         return mongoPort;
     }
 
-    public List<String> getServers() {
-        return this.servers;
+    public void setMongoHost(String mongoHost) {
+        this.mongoHost = mongoHost;
     }
 
-    public Set<String> getRejectedWords() {
+    public void setMongoPort(int mongoPort) {
+        this.mongoPort = mongoPort;
+    }
+
+    public List<String> getRejectedWords() {
         return rejectedWords;
     }
 
     @Override
     public String toString() {
-        return "AppProperties{" +
-                "servers=" + servers +
-                ", email='" + email + '\'' +
+        return "AppConfiguration{" +
+                "mongoHost='" + mongoHost + '\'' +
+                ", mongoPort=" + mongoPort +
+                ", rejectedWords=" + rejectedWords +
                 '}';
     }
 }
