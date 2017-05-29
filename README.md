@@ -39,6 +39,9 @@ Then you can run test by command:
 mvn test
 ```
 
+*Important note: please be aware that test running clears repositories. 
+It can happen that your data stored before will be deleted after tests run.* 
+
 #### How to run application
 
 For example go to project's "target" directory and run command:
@@ -92,7 +95,7 @@ Returns all words.
 ```
 
 ##### GET /api/words/{word}
-Returns particular word
+Returns particular word.
 
 ```
 {
@@ -112,7 +115,7 @@ Returns list of words which will be refused.
 ```
 
 ##### PUT /api/words/{word}
-Sets word 
+Sets word.
 
 Response statuses:
 >- 200 - Word was set
@@ -139,7 +142,7 @@ Response statuses:
 #### Words endpoint
 
 ##### GET /sentences
-Returns all generated sentences
+Returns all generated sentences.
 
 ```
 [
@@ -152,7 +155,7 @@ Returns all generated sentences
 ```
 
 ##### GET /sentences/{sentenceID}
-Returns particular generated sentence
+Returns particular generated sentence.
 
 ```
 {
@@ -165,7 +168,7 @@ Returns particular generated sentence
 ```
 
 ##### GET /sentences/{sentenceID}/yodaTalk
-Returns particular generated sentence in yoda talk format
+Returns particular generated sentence in yoda talk format.
 
 ```
 {
