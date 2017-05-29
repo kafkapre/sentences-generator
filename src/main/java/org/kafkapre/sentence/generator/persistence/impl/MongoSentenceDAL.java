@@ -2,7 +2,10 @@ package org.kafkapre.sentence.generator.persistence.impl;
 
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 import com.mongodb.client.model.Indexes;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.kafkapre.sentence.generator.model.BaseSentence;
@@ -23,6 +26,8 @@ import static com.mongodb.client.model.Updates.inc;
 
 public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
 
+    private static final Logger logger = LogManager.getLogger(MongoSentenceDAL.class);
+
     static final String collectionName = "sentences";
 
     private static final String idKey = "_id";
@@ -35,6 +40,7 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
 
     public MongoSentenceDAL(MongoClient mongoClient) {
         super(mongoClient);
+        logger.info("MongoSentenceDAL initialized successfully");
     }
 
     @Override
@@ -51,9 +57,10 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
 
     @Override
     public Sentence createAndStoreSentence(Words words) {
+        logger.debug("Method createAndStoreSentence called.");
         try {
             return createAndStoreSentenceInMongo(words);
-        } catch (RuntimeException ex) {
+        } catch (MongoException ex) {
             throw new PersistenceException(ex);
         }
     }
@@ -72,45 +79,45 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
 
     @Override
     public boolean incrementSentenceShowDisplayCount(ObjectId id) {
+        logger.debug("Method incrementSentenceShowDisplayCount called.");
         try {
             long modifiedCount = collection.updateOne(eq(idKey, id), inc(showDisplayCountKey, 1))
                     .getModifiedCount();
             return (modifiedCount != 0);
-        } catch (RuntimeException ex) {
+        } catch (MongoException ex) {
             throw new PersistenceException(ex);
         }
     }
 
     @Override
     public boolean incrementSentenceSameGeneratedCount(ObjectId id) {
+        logger.debug("Method incrementSentenceSameGeneratedCount called.");
         try {
             long modifiedCount = collection.updateOne(eq(idKey, id), inc(sameGeneratedCountKey, 1))
                     .getModifiedCount();
             return (modifiedCount != 0);
-        } catch (RuntimeException ex) {
+        } catch (MongoException ex) {
             throw new PersistenceException(ex);
         }
     }
 
     @Override
     public Optional<Sentence> getSentence(ObjectId id) {
-        return getSentenceFromMongo(id);
-    }
-
-    private Optional<Sentence> getSentenceFromMongo(ObjectId id) {
+        logger.debug("Method getSentence called.");
         try {
             Document d = collection.find(eq(idKey, id)).first();
             return Optional.ofNullable(buildSentence(d));
-        } catch (RuntimeException ex) {
+        } catch (MongoException ex) {
             throw new PersistenceException(ex);
         }
     }
 
     @Override
     public List<Sentence> getSentences(int hash) {
+        logger.debug("Method getSentences by hash called.");
         try {
             return getSentencesFromMongo(hash);
-        } catch (RuntimeException ex) {
+        } catch (MongoException ex) {
             throw new PersistenceException(ex);
         }
     }
@@ -126,9 +133,10 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
 
     @Override
     public List<Sentence> getSentences(Words words) {
+        logger.debug("Method getSentences by words called.");
         try {
             return getSentencesFromMongo(words);
-        } catch (RuntimeException ex) {
+        } catch (MongoException ex) {
             throw new PersistenceException(ex);
         }
     }
@@ -147,9 +155,10 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
 
     @Override
     public List<BaseSentence> getAllBaseSentences() {
+        logger.debug("Method getAllBaseSentences called.");
         try {
             return getAllBaseSentencesFromMongo();
-        } catch (RuntimeException ex) {
+        } catch (MongoException ex) {
             throw new PersistenceException(ex);
         }
     }

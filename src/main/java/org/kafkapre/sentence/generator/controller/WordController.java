@@ -1,5 +1,7 @@
 package org.kafkapre.sentence.generator.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kafkapre.sentence.generator.AppConfiguration;
 import org.kafkapre.sentence.generator.model.InfoMessage;
 import org.kafkapre.sentence.generator.model.Word;
@@ -31,6 +33,8 @@ import static javax.ws.rs.core.Response.Status.OK;
 @Path(RestPaths.wordPath)
 public class WordController {
 
+    private static final Logger logger = LogManager.getLogger(WordController.class);
+
     private AppConfiguration configuration;
 
     @Autowired
@@ -47,6 +51,7 @@ public class WordController {
 
     @GET
     public List<Word> getAllWords() {
+        logger.debug("Method createAndStoreSentence called.");
         List<Word> words = wordDAL.getAllWords();
         return words;
     }
@@ -54,12 +59,14 @@ public class WordController {
     @GET
     @Path("/rejected")
     public Set<String> getRejectedWords() {
+        logger.debug("Method createAndStoreSentence called.");
         return configuration.getRejectedWords();
     }
 
     @GET
     @Path("/{id}")
     public Response getWord(@PathParam("id") String id) {
+        logger.debug("Method createAndStoreSentence called.");
         Optional<Word> res = wordDAL.getWord(id);
         if (res.isPresent()) {
             return Response.status(OK).entity(res.get()).build();
@@ -72,8 +79,7 @@ public class WordController {
     @PUT
     @Path("/{id}")
     public Response putWord(@PathParam("id") String id, Word word) {
-        System.out.println(word);
-        System.out.println(configuration.getRejectedWords().contains(id));
+        logger.debug("Method createAndStoreSentence called.");
         // TODO check what happen when word cannot be parsed.
 
         if (!configuration.getRejectedWords().contains(id)) {
@@ -85,17 +91,5 @@ public class WordController {
             return Response.status(METHOD_NOT_ALLOWED).entity(response).build();
         }
     }
-
-//    @PUT
-//    @Path("/{id}")
-//    public Response putCsv(@PathParam("id") int id, String csvData) {
-//        logger.debug("PUT: putCsv endpoint requested");
-//
-//        if (id <= 0) {
-//            InfoMessage response = new InfoMessage(String.format("Id must be greater than 0. Your id is [%d]", id));
-//            return Response.status(PRECONDITION_FAILED).entity(response).build();
-//        }
-//        return store(id, csvData);
-//    }
 
 }

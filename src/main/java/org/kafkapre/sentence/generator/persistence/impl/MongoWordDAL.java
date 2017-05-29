@@ -2,11 +2,14 @@ package org.kafkapre.sentence.generator.persistence.impl;
 
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.ReturnDocument;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.kafkapre.sentence.generator.model.Word;
 import org.kafkapre.sentence.generator.model.WordCategory;
@@ -24,6 +27,8 @@ import static com.mongodb.client.model.Projections.include;
 
 public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
 
+    private static final Logger logger = LogManager.getLogger(MongoWordDAL.class);
+
     static final String collectionName = "words";
     private static final FindOneAndUpdateOptions findAndUpdateOptions = new FindOneAndUpdateOptions();
 
@@ -38,6 +43,7 @@ public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
 
     public MongoWordDAL(MongoClient mongoClient) {
         super(mongoClient);
+        logger.info("MongoWordDAL initialized successfully");
     }
 
     @Override
@@ -57,9 +63,10 @@ public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
 
     @Override
     public void putWord(Word word) {
+        logger.debug("Method putWord called.");
         try {
             putWordInMongo(word);
-        } catch (RuntimeException ex) {
+        } catch (MongoException ex) {
             throw new PersistenceException(ex);
         }
     }
@@ -75,19 +82,21 @@ public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
 
     @Override
     public Optional<Word> getWord(String id) {
+        logger.debug("Method getWord called.");
         try {
             Document d = collection.find(eq(textKey, id)).first();
             return Optional.ofNullable(buildWord(d));
-        } catch (RuntimeException ex) {
+        } catch (MongoException ex) {
             throw new PersistenceException(ex);
         }
     }
 
     @Override
     public Optional<Word> getRandomWord(WordCategory category) {
+        logger.debug("Method getRandomWord called.");
         try {
             return getRandomWordFromMongo(category);
-        } catch (RuntimeException ex) {
+        } catch (MongoException ex) {
             throw new PersistenceException(ex);
         }
     }
@@ -103,9 +112,10 @@ public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
 
     @Override
     public List<Word> getAllWords() {
+        logger.debug("Method getAllWords called.");
         try {
             return getAllWordsFromMongo();
-        } catch (RuntimeException ex) {
+        } catch (MongoException ex) {
             throw new PersistenceException(ex);
         }
     }

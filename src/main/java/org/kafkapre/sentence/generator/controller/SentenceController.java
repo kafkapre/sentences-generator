@@ -1,5 +1,7 @@
 package org.kafkapre.sentence.generator.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.types.ObjectId;
 import org.kafkapre.sentence.generator.AppConfiguration;
 import org.kafkapre.sentence.generator.model.BaseSentence;
@@ -11,6 +13,7 @@ import org.kafkapre.sentence.generator.model.WordCategory;
 import org.kafkapre.sentence.generator.model.Words;
 import org.kafkapre.sentence.generator.persistence.api.SentenceDAL;
 import org.kafkapre.sentence.generator.persistence.api.WordDAL;
+import org.kafkapre.sentence.generator.persistence.impl.MongoSentenceDAL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,10 +38,11 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
 
 @Component
-//@Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 @Path(RestPaths.sentencesPath)
 public class SentenceController {
+
+    private static final Logger logger = LogManager.getLogger(SentenceController.class);
 
     static final String resourceHrefHeaderName = "resourceHref";
 
@@ -50,6 +54,7 @@ public class SentenceController {
 
     @GET
     public List<SentenceJSON> getSentences() {
+        logger.debug("Method getSentences called.");
         List<BaseSentence> sentences = sentenceDAL.getAllBaseSentences();
         return sentences.stream().map(s -> s.generateBaseSentenceJSON()).collect(Collectors.toList());
     }
@@ -57,6 +62,7 @@ public class SentenceController {
     @GET
     @Path("/{id}")
     public Response getSentence(@PathParam("id") String id) {
+        logger.debug("Method getSentence called.");
         Function<Sentence, SentenceJSON> jsonFunction = sentence -> {
             return sentence.generateSentenceJSON();
         };
@@ -66,6 +72,7 @@ public class SentenceController {
     @GET
     @Path("/{id}/yodaTalk")
     public Response getSentenceYodaTalk(@PathParam("id") String id) {
+        logger.debug("Method getSentenceYodaTalk called.");
         Function<Sentence, SentenceJSON> jsonFunction = sentence -> {
             return sentence.generateYodaSentenceJSON();
         };
@@ -96,6 +103,7 @@ public class SentenceController {
     @POST
     @Path("/generate")
     public Response postSentence() {
+        logger.debug("Method postSentence called.");
         Words words = null;
         try {
             words = generateRandomSentenceWords();
@@ -122,8 +130,8 @@ public class SentenceController {
 
         List<Sentence> sentences = sentenceDAL.getSentences(words);
         if (!sentences.isEmpty()) {
-            if (sentences.size() > 0) {
-                // TODO log warning;
+            if (sentences.size() > 1) {
+                logger.error("There are more sentences with same words. [{}]", words);
             }
             Sentence sentence = sentences.get(0);
             boolean isOk = sentenceDAL.incrementSentenceSameGeneratedCount(sentence.getId());
