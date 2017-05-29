@@ -12,22 +12,20 @@
     <properties>
         <java.version>1.8</java.version>
         <spring-boot-version>1.5.3.RELEASE</spring-boot-version>
-        <!--<dropwizard-version>1.0.6</dropwizard-version>-->
+        <mongodb-driver-version>3.4.2</mongodb-driver-version>
         <junit-version>4.12</junit-version>
         <assertj-version>3.6.1</assertj-version>
         <jersey-version>1.19</jersey-version>
-        <!--<commons-cli-version>1.4</commons-cli-version>-->
-        <!--<apache-client-version>4.5.3</apache-client-version>-->
-        <!--<jedis-version>2.9.0</jedis-version>-->
-        <!--<embedded-redis-version>0.6</embedded-redis-version>-->
+        <commons-lang3-version>3.5</commons-lang3-version>
+        <json-unit-fluent-version>1.23.0</json-unit-fluent-version>
         <log4j2-version>2.8.2</log4j2-version>
+        <embed-mongo-version>2.0.0</embed-mongo-version>
     </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.3.RELEASE</version>
-        <!--<version>${spring-boot-version}</version>-->
     </parent>
 
     <dependencies>
@@ -35,7 +33,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
-            <version>3.4.2</version>
+            <version>${mongodb-driver-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -66,7 +64,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.5</version>
+            <version>${commons-lang3-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -112,13 +110,13 @@
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <!--<version>2.0.1-SNAPSHOT</version>-->
+            <version>${embed-mongo-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.javacrumbs.json-unit</groupId>
             <artifactId>json-unit-fluent</artifactId>
-            <version>1.23.0</version>
+            <version>${json-unit-fluent-version}</version>
             <scope>test</scope>
         </dependency>
 
