@@ -129,8 +129,6 @@ public class SentenceControllerTest extends AbstractMongoDbTest {
                 .node("sameGeneratedCount").isAbsent();
     }
 
-
-
     @Test
     public void getYodaSentenceTest() {
         putWord(new Word("car", NOUN));
@@ -167,114 +165,12 @@ public class SentenceControllerTest extends AbstractMongoDbTest {
         assertThatJson(resp.getBody()).isEqualTo("[{\"id\":\"${json-unit.ignore}\",\"href\":\"${json-unit.ignore}\",\"text\":\"car is new\"}]");
     }
 
-    @Test
-    public void cccTest() { // TODO - delete
-        putWord(new Word("car", NOUN));
-        putWord(new Word("is", VERB));
-        putWord(new Word("new", ADJECTIVE));
-        putWord(new Word("haha", ADJECTIVE));
-
-        ResponseEntity<String> resp = postNewSentence();
-        while (postNewSentence().getStatusCode() == CONFLICT){
-
-        }
-
-        resp = getSentences();
-        assertThat(resp.getStatusCode()).isEqualTo(OK);
-
-        System.out.println("----- " + resp.getBody());
-    }
-
     private String getResourceUrlFromHeaders(ResponseEntity<String> resp) {
         List<String> hrefList = resp.getHeaders().get(resourceHrefHeaderName);
         assertThat(hrefList).hasSize(1);
         return "http://localhost:" + port + "/" + hrefList.get(0);
     }
 
-    //    @Test
-//    public void getWordTest() {
-//        Word word = new Word("some", ADJECTIVE);
-//        {
-//            putWord(word);
-//            ResponseEntity<String> response = getWord(word.getText());
-//
-//            String expected = "{\"word\":\"some\",\"category\":\"ADJECTIVE\"}";
-//            assertThat(response.getStatusCode()).isEqualTo(OK);
-//            assertThatJson(response.getBody()).isEqualTo(expected);
-//        }
-//
-//        word = new Word("some", NOUN);
-//        {
-//            putWord(word);
-//            ResponseEntity<String> response = getWord(word.getText());
-//
-//            String expected = "{\"word\":\"some\",\"category\":\"NOUN\"}";
-//            assertThat(response.getStatusCode()).isEqualTo(OK);
-//            assertThatJson(response.getBody()).isEqualTo(expected);
-//        }
-//    }
-//
-//    @Test
-//    public void getNonExistingWordTest() {
-//        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-//
-//        ResponseEntity<String> response = restTemplate.exchange(
-//                createURLWithPort("-1"),
-//                HttpMethod.GET, entity, String.class);
-//
-//        assertThat(response.getStatusCodeValue()).isEqualTo(NOT_FOUND.value());
-//    }
-//
-//    @Test
-//    public void putWordTest() throws Exception {
-//        Word w = new Word("home", WordCategory.NOUN);
-//        ResponseEntity<String> response = putWord(w);
-//
-//        String expected = "{\"word\":\"home\",\"category\":\"NOUN\"}";
-//        assertThatJson(response.getBody()).isEqualTo(expected);
-//    }
-//
-//    @Test
-//    public void putRejectedWordTest() throws Exception {
-//        assertThat(configuration.getRejectedWords()).isNotEmpty();
-//        for(String text : configuration.getRejectedWords()){
-//            ResponseEntity<String> resp = putWord(new Word(text, NOUN), false);
-//            assertThatJson(resp.getStatusCodeValue()).isEqualTo(METHOD_NOT_ALLOWED.value());
-//        }
-//    }
-//
-//    @Test
-//    public void getWordsTest() throws Exception {
-//        putWord(new Word("home", WordCategory.NOUN));
-//        putWord(new Word("and", WordCategory.NOUN));
-//        putWord(new Word("to", WordCategory.NOUN));
-//
-//        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-//        ResponseEntity<String> response = restTemplate.exchange(
-//                createURLWithPort(),
-//                HttpMethod.GET, entity, String.class);
-//
-//        String expected = "[\"home\",\"and\",\"to\"]";
-//        assertThatJson(response.getBody()).isEqualTo(expected);
-//    }
-//
-//    @Test
-//    public void getRejectedWordsTest() throws Exception {
-//        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-//        ResponseEntity<String> response = restTemplate.exchange(
-//                createURLWithPort("rejected"),
-//                HttpMethod.GET, entity, String.class);
-//
-//        assertThatJson(response.getBody()).isEqualTo(configuration.getRejectedWords());
-//    }
-//
-//    private ResponseEntity<String> getWord(String id) {
-//        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-//        return restTemplate.exchange(
-//                createURLWithPort(id),
-//                HttpMethod.GET, entity, String.class);
-//    }
-//
     private void putWord(Word word) {
         HttpEntity<Word> entity = new HttpEntity<>(word, headers);
 

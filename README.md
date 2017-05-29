@@ -120,6 +120,7 @@ Sets word.
 
 Response statuses:
 >- 200 - Word was set
+>- 400 - E.g. Request body does not contain "category" field  or cannot deserialize "category" value.
 >- 405 - Word was refused
  
  - Request body

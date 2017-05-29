@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.METHOD_NOT_ALLOWED;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
@@ -78,7 +79,11 @@ public class WordController {
     @Path("/{id}")
     public Response putWord(@PathParam("id") String id, Word word) {
         logger.debug("Method createAndStoreSentence called.");
-        // TODO check what happen when word cannot be parsed.
+
+        if(word.getCategory() == null){
+            InfoMessage response = new InfoMessage("Category is missing", id);
+            return Response.status(BAD_REQUEST).entity(response).build();
+        }
 
         if (!rejectedWords.contains(id)) {
             word.setText(id);
