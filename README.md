@@ -10,8 +10,9 @@ You can input any word to the system but you need to specify its part of speech 
  >- Java 8 (Jdk)
  >- Git
  >- MongoDB
+ >- Docker (Optional)
 
-Tested on Ubuntu 64bit, OpenJdk 1.8, Maven 3.3.9., Git 1.9.1, MongoDB 3.4
+Tested on Ubuntu 64bit, OpenJdk 1.8, Maven 3.3.9., Git 1.9.1, MongoDB 3.4, Docker 17.05.0-ce
 
 ### Download project
 
@@ -28,10 +29,10 @@ mvn package -DskipTests
 ```
 
 ### How to run tests
-You have to run MongoDB locally (listening at port 27017) at first. E.g. you can start it by Docker command:
+You have to run MongoDB locally (listening at port 27017) at first. E.g. you can start it with Docker command:
 
-**!!! Important note: please be aware that test running clears repositories. 
-It can happen that your data stored before will be deleted after tests run.** 
+**!!! Important note: please be aware that test running clears repository. 
+It can happen that your stored data will be deleted after tests run.** 
 
 ```
 docker run --name mongo -p 27017:27017 -d mongo:3.4
