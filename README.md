@@ -39,8 +39,8 @@ Then you can run test by command:
 mvn test
 ```
 
-*Important note: please be aware that test running clears repositories. 
-It can happen that your data stored before will be deleted after tests run.* 
+**!!! Important note: please be aware that test running clears repositories. 
+It can happen that your data stored before will be deleted after tests run.** 
 
 #### How to run application
 
