@@ -15,6 +15,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -24,6 +25,7 @@ import static org.kafkapre.sentence.generator.controller.RestPaths.rootPath;
 import static org.kafkapre.sentence.generator.controller.RestPaths.wordsPath;
 import static org.kafkapre.sentence.generator.model.WordCategory.ADJECTIVE;
 import static org.kafkapre.sentence.generator.model.WordCategory.NOUN;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
@@ -48,7 +50,6 @@ public class WordControllerTest extends AbstractMongoDbTest {
 
         restTemplate = new TestRestTemplate();
         headers = new HttpHeaders();
-
     }
 
     @Test
@@ -94,7 +95,46 @@ public class WordControllerTest extends AbstractMongoDbTest {
         assertThatJson(response.getBody()).isEqualTo(expected);
     }
 
-    // TODO put with ok json  and bad one
+    @Test
+    public void putWordOnlyCategoryInBodyTest() throws Exception {
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String body = "{\"category\":\"NOUN\"}";
+        HttpEntity<String> entity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("home"),
+                HttpMethod.PUT, entity, String.class);
+
+        String expected = "{\"word\":\"home\",\"category\":\"NOUN\",\"href\":\"api/words/home\"}";
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+        assertThatJson(response.getBody()).isEqualTo(expected);
+    }
+
+    @Test
+    public void putWordOnlyWithoutCategoryInBodyTest() throws Exception {
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String body = "{\"xxx\":\"NOUN\"}";
+        HttpEntity<String> entity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("home"),
+                HttpMethod.PUT, entity, String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+    }
+
+    @Test
+    public void putWordCategoryBadFormatTest() throws Exception {
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String body = "{\"category\":\"noun\"}";
+        HttpEntity<String> entity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("home"),
+                HttpMethod.PUT, entity, String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+    }
 
     @Test
     public void putRejectedWordTest() throws Exception {
