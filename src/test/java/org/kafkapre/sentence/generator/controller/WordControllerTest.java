@@ -52,11 +52,6 @@ public class WordControllerTest extends AbstractMongoDbTest {
 
     }
 
-    @After
-    public void shutdown() throws Exception {
-//        super.tearDown();
-    }
-
     @Test
     public void getWordTest() {
         Word word = new Word("some", ADJECTIVE);
