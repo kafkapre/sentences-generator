@@ -1,6 +1,5 @@
 package org.kafkapre.sentence.generator.model;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,7 +21,7 @@ public class Word {
     @JsonIgnore // (access = JsonProperty.Access.WRITE_ONLY) - bug: does not work, so there is workaround @JsonIgnore on property which is not
     private String href;
 
-    Word() {
+    Word() {    // package private
         // constructor for Json parsing
     }
 

@@ -95,7 +95,6 @@ public class MongoWordDALTest extends AbstractMongoDbTest {
         client.putWord(w);
         actual = client.getWord(w.getText());
 
-
         assertThat(actual).isPresent();
         assertThat(actual.get()).isNotSameAs(w);
         assertThat(actual.get()).isEqualTo(w);

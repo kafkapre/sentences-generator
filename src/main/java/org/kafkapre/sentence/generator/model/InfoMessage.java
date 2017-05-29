@@ -10,9 +10,10 @@ public class InfoMessage {
     @XmlElement
     private String message;
 
-    public InfoMessage() {}
+    public InfoMessage() {
+    }
 
-    public InfoMessage(String str, Object... objects){
+    public InfoMessage(String str, Object... objects) {
         this.message = String.format(str, objects);
     }
 

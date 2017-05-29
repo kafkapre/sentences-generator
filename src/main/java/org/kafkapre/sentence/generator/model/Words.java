@@ -11,20 +11,20 @@ public class Words {
     private final String verb;
     private final String adjective;
 
-    public Words(String noun, String verb, String adjective){
+    public Words(String noun, String verb, String adjective) {
         this.noun = noun;
         this.verb = verb;
         this.adjective = adjective;
     }
 
-    public Words(Optional<Word> noun, Optional<Word> verb, Optional<Word> adjective){
+    public Words(Optional<Word> noun, Optional<Word> verb, Optional<Word> adjective) {
         this(getWordText(noun), getWordText(verb), getWordText(adjective));
     }
 
-    private static String getWordText(Optional<Word> word){
-        if (word.isPresent() && word.get().getText().trim().length() > 0){
+    private static String getWordText(Optional<Word> word) {
+        if (word.isPresent() && word.get().getText().trim().length() > 0) {
             return word.get().getText();
-        }else {
+        } else {
             return null;
         }
     }

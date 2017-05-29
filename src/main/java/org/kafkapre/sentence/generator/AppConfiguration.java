@@ -15,6 +15,7 @@ public class AppConfiguration {
     private int mongoPort = 27017;
 
     private List<String> rejectedWords = new ArrayList<>();
+
     {
         rejectedWords.add("aadf");
     }

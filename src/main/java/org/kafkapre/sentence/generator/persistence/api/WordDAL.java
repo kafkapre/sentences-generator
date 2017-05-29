@@ -9,8 +9,11 @@ import java.util.Optional;
 public interface WordDAL {
 
     void putWord(Word word);
+
     Optional<Word> getWord(String id);
+
     Optional<Word> getRandomWord(WordCategory category);
+
     List<Word> getAllWords();
 
 }

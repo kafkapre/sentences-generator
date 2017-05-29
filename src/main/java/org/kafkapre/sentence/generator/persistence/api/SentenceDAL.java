@@ -12,11 +12,17 @@ import java.util.Optional;
 public interface SentenceDAL {
 
     Sentence createAndStoreSentence(Words words);
+
     boolean incrementSentenceShowDisplayCount(ObjectId id);
+
     boolean incrementSentenceSameGeneratedCount(ObjectId id);
+
     Optional<Sentence> getSentence(ObjectId id);
+
     List<Sentence> getSentences(int hash);
+
     List<Sentence> getSentences(Words words);
+
     List<BaseSentence> getAllBaseSentences();
 
 }

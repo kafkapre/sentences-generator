@@ -116,7 +116,7 @@ Returns list of words which will be refused.
 ```
 
 ##### PUT /api/words/{word}
-Sets word.
+Sets word. Requires header: "Content-Type: application/json"
 
 Response statuses:
 >- 200 - Word was set

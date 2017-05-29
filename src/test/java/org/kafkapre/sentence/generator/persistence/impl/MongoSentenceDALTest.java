@@ -21,9 +21,6 @@ public class MongoSentenceDALTest extends AbstractMongoDbTest {
 
     private SentenceDAL client;
 
-
-
-
     @Before
     public void setup() {
         clearDatabase(mongoPort);
@@ -43,7 +40,6 @@ public class MongoSentenceDALTest extends AbstractMongoDbTest {
                 break;
             }
         }
-
         assertThat(found).isTrue();
     }
 
@@ -167,6 +163,5 @@ public class MongoSentenceDALTest extends AbstractMongoDbTest {
         }
         return resArr;
     }
-
 
 }

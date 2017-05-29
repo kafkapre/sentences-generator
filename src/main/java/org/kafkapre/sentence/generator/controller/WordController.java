@@ -36,6 +36,7 @@ public class WordController {
     private static final Logger logger = LogManager.getLogger(WordController.class);
 
     private HashSet rejectedWords;
+
     @Autowired
     public void setConfiguration(AppConfiguration configuration) {
         rejectedWords = new HashSet(configuration.getRejectedWords());
@@ -80,7 +81,7 @@ public class WordController {
     public Response putWord(@PathParam("id") String id, Word word) {
         logger.debug("Method createAndStoreSentence called.");
 
-        if(word.getCategory() == null){
+        if (word.getCategory() == null) {
             InfoMessage response = new InfoMessage("Category is missing", id);
             return Response.status(BAD_REQUEST).entity(response).build();
         }

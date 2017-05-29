@@ -22,7 +22,7 @@ public class MongoConnectorFactory {
         try {
             mongoClient = new MongoClient(conf.getMongoHost(), conf.getMongoPort());
             logger.info("Connected to MongoDB OK. [host:{}, port:{}]", conf.getMongoHost(), conf.getMongoPort());
-        }catch (MongoException ex){
+        } catch (MongoException ex) {
             String msg = String.format("Cannot connect to MongoDB [host:%s, port:%d]",
                     conf.getMongoHost(), conf.getMongoPort());
             throw new RuntimeException(msg, ex);

@@ -19,7 +19,7 @@ public class RootController {
 
     private static final Logger logger = LogManager.getLogger(RootController.class);
 
-    private static class RootApi{
+    private static class RootApi {
 
         @JsonProperty
         private final String wordsPath = RestPaths.wordsPath;

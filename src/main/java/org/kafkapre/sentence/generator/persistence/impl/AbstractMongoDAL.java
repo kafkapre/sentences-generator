@@ -6,9 +6,9 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 
-public abstract class AbstractMongoDAL  {
+public abstract class AbstractMongoDAL {
 
-    static final String databaseName ="generator";
+    static final String databaseName = "generator";
 
     protected final MongoDatabase database;
     protected final MongoCollection<Document> collection;
@@ -21,18 +21,19 @@ public abstract class AbstractMongoDAL  {
     }
 
     abstract protected String getCollectionName();
+
     abstract protected void initIndexes();
 
-    protected boolean hasIndex(Iterable<Document> indexes, String indexName){
-        for(Document d : indexes){
-            if(isIndexWithKey(d, indexName)){
+    protected boolean hasIndex(Iterable<Document> indexes, String indexName) {
+        for (Document d : indexes) {
+            if (isIndexWithKey(d, indexName)) {
                 return true;
             }
         }
         return false;
     }
 
-    protected boolean isIndexWithKey(Document doc, String key){
+    protected boolean isIndexWithKey(Document doc, String key) {
         return ((Document) doc.get("key")).containsKey(key);
     }
 }

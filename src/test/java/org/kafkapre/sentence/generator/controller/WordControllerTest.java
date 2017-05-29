@@ -83,7 +83,7 @@ public class WordControllerTest extends AbstractMongoDbTest {
                 createURLWithPort("-1"),
                 HttpMethod.GET, entity, String.class);
 
-        assertThat(response.getStatusCodeValue()).isEqualTo(NOT_FOUND.value());
+        assertThat(response.getStatusCode()).isEqualTo(NOT_FOUND);
     }
 
     @Test
@@ -141,7 +141,7 @@ public class WordControllerTest extends AbstractMongoDbTest {
         assertThat(configuration.getRejectedWords()).isNotEmpty();
         for(String text : configuration.getRejectedWords()){
             ResponseEntity<String> resp = putWord(new Word(text, NOUN), false);
-            assertThatJson(resp.getStatusCodeValue()).isEqualTo(METHOD_NOT_ALLOWED.value());
+            assertThatJson(resp.getStatusCode()).isEqualTo(METHOD_NOT_ALLOWED);
         }
     }
 
