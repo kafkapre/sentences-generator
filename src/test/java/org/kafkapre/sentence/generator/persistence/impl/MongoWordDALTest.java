@@ -2,8 +2,9 @@ package org.kafkapre.sentence.generator.persistence.impl;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.kafkapre.sentence.generator.model.Word;
@@ -18,13 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.kafkapre.sentence.generator.model.WordCategory.ADJECTIVE;
 import static org.kafkapre.sentence.generator.model.WordCategory.NOUN;
 import static org.kafkapre.sentence.generator.model.WordCategory.VERB;
-import static org.kafkapre.sentence.generator.persistence.impl.AbstractMongoDAL.databaseName;
-import static org.kafkapre.sentence.generator.persistence.impl.MongoSentenceDAL.hashKey;
-import static org.kafkapre.sentence.generator.persistence.impl.MongoWordDAL.categoryKey;
-import static org.kafkapre.sentence.generator.persistence.impl.MongoWordDAL.textKey;
 
 
-public class MongoWordDALTest {
+public class MongoWordDALTest extends AbstractMongoDbTest {
 
     private WordDAL client;
 
@@ -36,20 +33,14 @@ public class MongoWordDALTest {
         client = new MongoWordDAL(mongoClient);
     }
 
-    private void clearDatabase() {
-        MongoCollection<Document> collection = createTestLocalClient();
-        collection.drop();
-    }
-
-    private MongoCollection<Document> createTestLocalClient(){
-        MongoClient mongoClient = new MongoClient("localhost", 27017);
-        MongoDatabase database = mongoClient.getDatabase(databaseName);
-        return database.getCollection(MongoWordDAL.collectionName);
+    @AfterClass
+    public static void destroy() throws Exception {
+//        stopEmbeddedMongo();
     }
 
     @Test
     public void indexesTest() throws InterruptedException {
-        MongoCollection<Document> collection = createTestLocalClient();
+        MongoCollection<Document> collection = createTestLocalClient(MongoWordDAL.collectionName);
 
         boolean textIndexFound = false;
         boolean categoryIndexFound = false;
@@ -97,31 +88,23 @@ public class MongoWordDALTest {
     }
 
     @Test
-    public void storeAndGeTwotWordTest() throws Exception {
-//        Word w = new Word("some-word", ADJECTIVE);
+    public void storeAndGeTwoWordTest() throws Exception {
+        Word w = new Word("some-word", ADJECTIVE);
+        client.putWord(w);
+        Optional<Word> actual = client.getWord(w.getText());
 
-        {
-            Word w = new Word("some-word", ADJECTIVE);
-            client.putWord(w);
-            Optional<Word> actual = client.getWord(w.getText());
+        assertThat(actual).isPresent();
+        assertThat(actual.get()).isNotSameAs(w);
+        assertThat(actual.get()).isEqualTo(w);
 
-            assertThat(actual).isPresent();
-            assertThat(actual.get()).isNotSameAs(w);
-            assertThat(actual.get()).isEqualTo(w);
-        }
-
-
-
-        {
-            Word w = new Word("some-word", NOUN);
-            client.putWord(w);
-            Optional<Word> actual = client.getWord(w.getText());
+        w = new Word("some-word", NOUN);
+        client.putWord(w);
+        actual = client.getWord(w.getText());
 
 
-            assertThat(actual).isPresent();
-            assertThat(actual.get()).isNotSameAs(w);
-            assertThat(actual.get()).isEqualTo(w);
-        }
+        assertThat(actual).isPresent();
+        assertThat(actual.get()).isNotSameAs(w);
+        assertThat(actual.get()).isEqualTo(w);
     }
 
     @Test

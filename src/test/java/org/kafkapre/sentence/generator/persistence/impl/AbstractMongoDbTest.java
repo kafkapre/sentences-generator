@@ -15,6 +15,8 @@ import org.bson.Document;
 import org.kafkapre.sentence.generator.persistence.impl.AbstractMongoDAL;
 import org.kafkapre.sentence.generator.persistence.impl.MongoSentenceDAL;
 
+import static org.kafkapre.sentence.generator.persistence.impl.AbstractMongoDAL.databaseName;
+
 public abstract class AbstractMongoDbTest {
 
     /**
@@ -50,6 +52,13 @@ public abstract class AbstractMongoDbTest {
     public Mongo getMongo() {
         return _mongo;
     }
+
+    protected MongoCollection<Document> createTestLocalClient(String collectionName) {
+        MongoClient mongoClient = new MongoClient("localhost", 27017);
+        MongoDatabase database = mongoClient.getDatabase(databaseName);
+        return database.getCollection(collectionName);
+    }
+
 
     protected void clearDatabase() {
         MongoClient mongoClient = new MongoClient("localhost", 27017);

@@ -2,7 +2,6 @@ package org.kafkapre.sentence.generator.persistence.impl;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.junit.Before;
@@ -16,10 +15,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.kafkapre.sentence.generator.persistence.impl.AbstractMongoDAL.databaseName;
 
 
-public class MongoSentenceDALTest {
+public class MongoSentenceDALTest extends AbstractMongoDbTest {
 
     private SentenceDAL client;
 
@@ -31,20 +29,10 @@ public class MongoSentenceDALTest {
         client = new MongoSentenceDAL(mongoClient);
     }
 
-    private void clearDatabase() {
-        MongoCollection<Document> collection = createTestLocalClient();
-        collection.drop();
-    }
-
-    private MongoCollection<Document> createTestLocalClient() {
-        MongoClient mongoClient = new MongoClient("localhost", 27017);
-        MongoDatabase database = mongoClient.getDatabase(databaseName);
-        return database.getCollection(MongoSentenceDAL.collectionName);
-    }
 
     @Test
     public void indexesTest() throws InterruptedException {
-        MongoCollection<Document> collection = createTestLocalClient();
+        MongoCollection<Document> collection = createTestLocalClient(MongoSentenceDAL.collectionName);
 
         boolean found = false;
         for (Document d : collection.listIndexes()) {
