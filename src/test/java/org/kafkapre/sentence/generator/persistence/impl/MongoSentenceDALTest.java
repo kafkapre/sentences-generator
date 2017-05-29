@@ -3,12 +3,11 @@ package org.kafkapre.sentence.generator.persistence.impl;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Indexes;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kafkapre.sentence.generator.model.BaseSentence;
 import org.kafkapre.sentence.generator.model.Sentence;
 import org.kafkapre.sentence.generator.model.Words;
 import org.kafkapre.sentence.generator.persistence.api.SentenceDAL;
@@ -16,10 +15,8 @@ import org.kafkapre.sentence.generator.persistence.api.SentenceDAL;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.Thread.sleep;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kafkapre.sentence.generator.persistence.impl.AbstractMongoDAL.databaseName;
-import static org.kafkapre.sentence.generator.persistence.impl.MongoSentenceDAL.hashKey;
 
 
 public class MongoSentenceDALTest {
@@ -39,7 +36,7 @@ public class MongoSentenceDALTest {
         collection.drop();
     }
 
-    private MongoCollection<Document> createTestLocalClient(){
+    private MongoCollection<Document> createTestLocalClient() {
         MongoClient mongoClient = new MongoClient("localhost", 27017);
         MongoDatabase database = mongoClient.getDatabase(databaseName);
         return database.getCollection(MongoSentenceDAL.collectionName);
@@ -62,7 +59,7 @@ public class MongoSentenceDALTest {
 
     @Test
     public void storeSentenceTest() {
-        Words words = new Words("some-noun","some-verb", "some-adjective");
+        Words words = new Words("some-noun", "some-verb", "some-adjective");
         Sentence actual = client.createAndStoreSentence(words);
 
         assertThat(actual).isNotNull();
@@ -73,7 +70,7 @@ public class MongoSentenceDALTest {
 
     @Test
     public void getSentenceTest() {
-        Words words = new Words("some-noun","some-verb", "some-adjective");
+        Words words = new Words("some-noun", "some-verb", "some-adjective");
         Sentence stored = client.createAndStoreSentence(words);
 
         assertThat(stored).isNotNull();
@@ -112,7 +109,7 @@ public class MongoSentenceDALTest {
 
     @Test
     public void incrementSentenceShowDisplayCountTest() {
-        Words words = new Words("some-noun","some-verb", "some-adjective");
+        Words words = new Words("some-noun", "some-verb", "some-adjective");
         Sentence stored = client.createAndStoreSentence(words);
 
         boolean res = client.incrementSentenceShowDisplayCount(stored.getId());
@@ -154,10 +151,20 @@ public class MongoSentenceDALTest {
     @Test
     public void getAllSentencesTest() {
         Sentence[] stored = storeSentences("1", "2", "1", "3", "1");
-        List<Sentence> actual = client.getAllSentences();
+        BaseSentence[] expected = transformToBaseSentenceArr(stored);
+
+        List<BaseSentence> actual = client.getAllBaseSentences();
 
         assertThat(actual).hasSize(5);
-        assertThat(actual).containsExactly(stored);
+        assertThat(actual).contains(expected);
+    }
+
+    private BaseSentence[] transformToBaseSentenceArr(Sentence[] input){
+        BaseSentence[] res = new BaseSentence[input.length];
+        for (int i = 0; i < input.length; i++) {
+            res[i] = (BaseSentence) input[i];
+        }
+        return res;
     }
 
     private Sentence[] storeSentences(String... ids) {

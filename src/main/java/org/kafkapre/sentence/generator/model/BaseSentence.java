@@ -52,4 +52,12 @@ public class BaseSentence {
     public int hashCode() {
         return Objects.hash(id, words);
     }
+
+    @Override
+    public String toString() {
+        return "BaseSentence{" +
+                "id=" + id +
+                ", words=" + words +
+                '}';
+    }
 }

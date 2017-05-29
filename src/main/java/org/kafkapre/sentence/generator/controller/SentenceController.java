@@ -35,10 +35,12 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
 
 @Component
-@Consumes({MediaType.APPLICATION_JSON})
+//@Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 @Path(RestPaths.sentencesPath)
 public class SentenceController {
+
+    static final String resourceHrefHeaderName = "resourceHref";
 
     @Autowired
     private WordDAL wordDAL;
@@ -102,6 +104,7 @@ public class SentenceController {
                     " some are missing. [%s]", ex.getMessage());
             return Response.status(BAD_REQUEST).entity(response).build();
         }
+
         return generateResponseForNewSentence(words);
     }
 
@@ -116,8 +119,6 @@ public class SentenceController {
     }
 
     private Response generateResponseForNewSentence(Words words) {
-        Object entity = null;
-        Response.Status status = null;
 
         List<Sentence> sentences = sentenceDAL.getSentences(words);
         if (!sentences.isEmpty()) {
@@ -127,17 +128,16 @@ public class SentenceController {
             Sentence sentence = sentences.get(0);
             boolean isOk = sentenceDAL.incrementSentenceSameGeneratedCount(sentence.getId());
             if (!isOk) {
-                entity = new InfoMessage("Generation of new sentence failed.");
-                status = INTERNAL_SERVER_ERROR;
+                InfoMessage entity = new InfoMessage("Generation of new sentence failed.");
+                return Response.status(INTERNAL_SERVER_ERROR).entity(entity).build();
             } else {
-                entity = sentence;
-                status = CONFLICT;
+                SentenceJSON entity = sentenceDAL.getSentence(sentence.getId()).get().generateSentenceJSON();
+                return Response.status(CONFLICT).entity(entity).header(resourceHrefHeaderName, entity.getHref()).build();
             }
         } else {
-            entity = sentenceDAL.createAndStoreSentence(words);
-            status = CREATED;
+            SentenceJSON entity = sentenceDAL.createAndStoreSentence(words).generateSentenceJSON();
+            return Response.status(CREATED).entity(entity).header(resourceHrefHeaderName, entity.getHref()).build();
         }
-        return Response.status(status).entity(entity).build();
     }
 
     private ObjectId createObjectId(String id) {

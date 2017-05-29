@@ -11,7 +11,6 @@ import static org.kafkapre.sentence.generator.controller.RestPaths.sentencesPath
 public class Sentence extends BaseSentence {
 
 
-
     private final Long showDisplayCount;
     private final Long sameGeneratedCount;
 
@@ -26,12 +25,13 @@ public class Sentence extends BaseSentence {
 
     public SentenceJSON generateSentenceJSON() {
         String text = words.getNoun() + " " + words.getVerb() + " " + words.getAdjective();
-        Long _sameGeneratedCount = (sameGeneratedCount > 1L) ? sameGeneratedCount : null;
+        Long _sameGeneratedCount = (sameGeneratedCount != null && (sameGeneratedCount) > 1L) ?
+                sameGeneratedCount : null;
         return new SentenceJSON(id, text, showDisplayCount, _sameGeneratedCount, id.getTimestamp());
     }
 
     public SentenceJSON generateYodaSentenceJSON() {
-        String text = words.getNoun() + " " + words.getVerb() + " " + words.getAdjective();
+        String text = words.getAdjective() + " " + words.getNoun() + " " + words.getVerb();
         return new SentenceJSON(id, text, null, null, null);
     }
 

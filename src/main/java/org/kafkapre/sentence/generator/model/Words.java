@@ -75,4 +75,13 @@ public class Words {
         result = 31 * result + (adjective != null ? adjective.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Words{" +
+                "noun='" + noun + '\'' +
+                ", verb='" + verb + '\'' +
+                ", adjective='" + adjective + '\'' +
+                '}';
+    }
 }
