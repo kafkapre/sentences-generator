@@ -1,14 +1,12 @@
 package org.kafkapre.sentence.generator.exceptionMappers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kafkapre.sentence.generator.model.InfoMessage;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kafkapre.sentence.generator.persistence.impl.MongoWordDAL;
 
 
 @Provider

@@ -18,9 +18,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-
 import java.util.List;
 
+import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kafkapre.sentence.generator.controller.RestPaths.rootPath;
 import static org.kafkapre.sentence.generator.controller.RestPaths.sentencesPath;
@@ -29,12 +29,10 @@ import static org.kafkapre.sentence.generator.controller.SentenceController.reso
 import static org.kafkapre.sentence.generator.model.WordCategory.ADJECTIVE;
 import static org.kafkapre.sentence.generator.model.WordCategory.NOUN;
 import static org.kafkapre.sentence.generator.model.WordCategory.VERB;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-
-import static net.javacrumbs.jsonunit.fluent.JsonFluentAssert.assertThatJson;
 
 
 @RunWith(SpringRunner.class)

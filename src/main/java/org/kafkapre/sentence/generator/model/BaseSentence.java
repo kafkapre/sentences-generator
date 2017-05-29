@@ -1,13 +1,9 @@
 package org.kafkapre.sentence.generator.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.Validate;
 import org.bson.types.ObjectId;
 
 import java.util.Objects;
-
-import static org.kafkapre.sentence.generator.controller.RestPaths.rootPath;
-import static org.kafkapre.sentence.generator.controller.RestPaths.sentencesPath;
 
 public class BaseSentence {
 
