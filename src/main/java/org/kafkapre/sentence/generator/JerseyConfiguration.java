@@ -7,6 +7,8 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.kafkapre.sentence.generator.controller.RestPaths;
 import org.kafkapre.sentence.generator.controller.SentenceController;
 import org.kafkapre.sentence.generator.controller.WordController;
+import org.kafkapre.sentence.generator.exceptionMappers.GenericExceptionMapper;
+import org.kafkapre.sentence.generator.exceptionMappers.PersistenceExceptionMapper;
 import org.springframework.context.annotation.Configuration;
 
 
@@ -23,5 +25,6 @@ public class JerseyConfiguration extends ResourceConfig {
         register(WordController.class);
         register(SentenceController.class);
         register(GenericExceptionMapper.class);
+        register(PersistenceExceptionMapper.class);
     }
 }

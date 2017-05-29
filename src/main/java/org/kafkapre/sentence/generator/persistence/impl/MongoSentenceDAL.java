@@ -2,15 +2,13 @@ package org.kafkapre.sentence.generator.persistence.impl;
 
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.kafkapre.sentence.generator.model.BaseSentence;
 import org.kafkapre.sentence.generator.model.Sentence;
-import org.kafkapre.sentence.generator.model.Word;
 import org.kafkapre.sentence.generator.model.Words;
+import org.kafkapre.sentence.generator.persistence.api.PersistenceException;
 import org.kafkapre.sentence.generator.persistence.api.SentenceDAL;
 
 import java.util.ArrayList;
@@ -53,39 +51,71 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
 
     @Override
     public Sentence createAndStoreSentence(Words words) {
+        try {
+            return createAndStoreSentenceInMongo(words);
+        } catch (RuntimeException ex) {
+            throw new PersistenceException(ex);
+        }
+    }
+
+    private Sentence createAndStoreSentenceInMongo(Words words) {
         Document document = new Document(hashKey, words.hashCode())
                 .append(nounKey, words.getNoun())
                 .append(verbKey, words.getVerb())
                 .append(adjectiveKey, words.getAdjective())
                 .append(showDisplayCountKey, 0L)
                 .append(sameGeneratedCountKey, 1L);
-        collection.insertOne(document);
 
+        collection.insertOne(document);
         return buildSentence(document);
     }
 
     @Override
     public boolean incrementSentenceShowDisplayCount(ObjectId id) {
-        long modifiedCount = collection.updateOne(eq(idKey, id), inc(showDisplayCountKey, 1))
-                .getModifiedCount();
-        return (modifiedCount != 0);
+        try {
+            long modifiedCount = collection.updateOne(eq(idKey, id), inc(showDisplayCountKey, 1))
+                    .getModifiedCount();
+            return (modifiedCount != 0);
+        } catch (RuntimeException ex) {
+            throw new PersistenceException(ex);
+        }
     }
 
     @Override
     public boolean incrementSentenceSameGeneratedCount(ObjectId id) {
-        long modifiedCount = collection.updateOne(eq(idKey, id), inc(sameGeneratedCountKey, 1))
-                .getModifiedCount();
-        return (modifiedCount != 0);
+        try {
+            long modifiedCount = collection.updateOne(eq(idKey, id), inc(sameGeneratedCountKey, 1))
+                    .getModifiedCount();
+            return (modifiedCount != 0);
+        } catch (RuntimeException ex) {
+            throw new PersistenceException(ex);
+        }
     }
 
     @Override
     public Optional<Sentence> getSentence(ObjectId id) {
-        Document d = collection.find(eq(idKey, id)).first();
-        return Optional.ofNullable(buildSentence(d));
+        return getSentenceFromMongo(id);
+    }
+
+    private Optional<Sentence> getSentenceFromMongo(ObjectId id) {
+        try {
+            Document d = collection.find(eq(idKey, id)).first();
+            return Optional.ofNullable(buildSentence(d));
+        } catch (RuntimeException ex) {
+            throw new PersistenceException(ex);
+        }
     }
 
     @Override
     public List<Sentence> getSentences(int hash) {
+        try {
+            return getSentencesFromMongo(hash);
+        } catch (RuntimeException ex) {
+            throw new PersistenceException(ex);
+        }
+    }
+
+    private List<Sentence> getSentencesFromMongo(int hash) {
         List<Sentence> list = new ArrayList<>();
         collection.find(eq(hashKey, hash))
                 .forEach((Block<Document>) document -> {
@@ -96,6 +126,14 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
 
     @Override
     public List<Sentence> getSentences(Words words) {
+        try {
+            return getSentencesFromMongo(words);
+        } catch (RuntimeException ex) {
+            throw new PersistenceException(ex);
+        }
+    }
+
+    private List<Sentence> getSentencesFromMongo(Words words) {
         List<Sentence> list = new ArrayList<>();
         collection.find(and(eq(hashKey, words.hashCode()),
                 eq(nounKey, words.getNoun()),
@@ -109,11 +147,19 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
 
     @Override
     public List<BaseSentence> getAllBaseSentences() {
+        try {
+            return getAllBaseSentencesFromMongo();
+        } catch (RuntimeException ex) {
+            throw new PersistenceException(ex);
+        }
+    }
+
+    private List<BaseSentence> getAllBaseSentencesFromMongo() {
         List<BaseSentence> list = new ArrayList<>();
         collection.find().projection(fields(include(idKey, nounKey, verbKey, adjectiveKey)))
                 .forEach((Block<Document>) document -> {
-            list.add(buildBasicSentence(document));
-        });
+                    list.add(buildBasicSentence(document));
+                });
         return list;
     }
 

@@ -2,17 +2,15 @@ package org.kafkapre.sentence.generator.persistence.impl;
 
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
-import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.ReturnDocument;
 import org.bson.Document;
 import org.kafkapre.sentence.generator.model.Word;
 import org.kafkapre.sentence.generator.model.WordCategory;
+import org.kafkapre.sentence.generator.persistence.api.PersistenceException;
 import org.kafkapre.sentence.generator.persistence.api.WordDAL;
 
 import java.util.ArrayList;
@@ -37,9 +35,6 @@ public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
     static final String textKey = "text";
     static final String categoryKey = "category";
 
-//    MongoClient mongoClient = new MongoClient("localhost", 27017);
-//    MongoDatabase database = mongoClient.getDatabase("generator");
-//    MongoCollection<Document> collection = database.getCollection("words");
 
     public MongoWordDAL(MongoClient mongoClient) {
         super(mongoClient);
@@ -50,18 +45,26 @@ public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
         return collectionName;
     }
 
-    protected void initIndexes(){
+    protected void initIndexes() {
         Iterable<Document> indexes = collection.listIndexes();
-        if(!hasIndex(indexes, categoryKey)){
+        if (!hasIndex(indexes, categoryKey)) {
             collection.createIndex(Indexes.hashed(categoryKey));
         }
-        if(!hasIndex(indexes, textKey)){
+        if (!hasIndex(indexes, textKey)) {
             collection.createIndex(Indexes.text(textKey));
         }
     }
 
     @Override
     public void putWord(Word word) {
+        try {
+            putWordInMongo(word);
+        } catch (RuntimeException ex) {
+            throw new PersistenceException(ex);
+        }
+    }
+
+    private void putWordInMongo(Word word) {
         Document doc = new Document();
         doc.put(textKey, word.getText());
         doc.put(categoryKey, word.getCategory().toString());
@@ -72,12 +75,24 @@ public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
 
     @Override
     public Optional<Word> getWord(String id) {
-        Document d = collection.find(eq(textKey, id)).first();
-        return Optional.ofNullable(buildWord(d));
+        try {
+            Document d = collection.find(eq(textKey, id)).first();
+            return Optional.ofNullable(buildWord(d));
+        } catch (RuntimeException ex) {
+            throw new PersistenceException(ex);
+        }
     }
 
     @Override
     public Optional<Word> getRandomWord(WordCategory category) {
+        try {
+            return getRandomWordFromMongo(category);
+        } catch (RuntimeException ex) {
+            throw new PersistenceException(ex);
+        }
+    }
+
+    private Optional<Word> getRandomWordFromMongo(WordCategory category) {
         Document d = collection.aggregate(
                 Arrays.asList(
                         Aggregates.match(Filters.eq(categoryKey, category.toString())),
@@ -88,6 +103,14 @@ public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
 
     @Override
     public List<Word> getAllWords() {
+        try {
+            return getAllWordsFromMongo();
+        } catch (RuntimeException ex) {
+            throw new PersistenceException(ex);
+        }
+    }
+
+    private List<Word> getAllWordsFromMongo() {
         List<Word> list = new ArrayList<>();
         collection.find().projection(fields(include(textKey))).forEach((Block<Document>) document -> {
             list.add(buildSimpleWord(document));
