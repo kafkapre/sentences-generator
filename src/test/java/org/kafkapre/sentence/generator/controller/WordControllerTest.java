@@ -44,10 +44,6 @@ public class WordControllerTest extends AbstractMongoDbTest {
     private TestRestTemplate restTemplate;
     private HttpHeaders headers;
 
-
-
-
-
     @Before
     public void startup() throws Exception {
         clearDatabase();
@@ -55,15 +51,12 @@ public class WordControllerTest extends AbstractMongoDbTest {
         restTemplate = new TestRestTemplate();
         headers = new HttpHeaders();
 
-//       super.setUp();
     }
 
     @After
     public void shutdown() throws Exception {
 //        super.tearDown();
     }
-
-
 
     @Test
     public void getWordTest() {
@@ -72,7 +65,7 @@ public class WordControllerTest extends AbstractMongoDbTest {
             putWord(word);
             ResponseEntity<String> response = getWord(word.getText());
 
-            String expected = "{\"word\":\"some\",\"category\":\"ADJECTIVE\"}";
+            String expected = "{\"word\":\"some\",\"href\":\"api/words/some\",\"category\":\"ADJECTIVE\"}";
             assertThat(response.getStatusCode()).isEqualTo(OK);
             assertThatJson(response.getBody()).isEqualTo(expected);
         }
@@ -82,7 +75,7 @@ public class WordControllerTest extends AbstractMongoDbTest {
             putWord(word);
             ResponseEntity<String> response = getWord(word.getText());
 
-            String expected = "{\"word\":\"some\",\"category\":\"NOUN\"}";
+            String expected = "{\"word\":\"some\",\"category\":\"NOUN\",\"href\":\"api/words/some\"}";
             assertThat(response.getStatusCode()).isEqualTo(OK);
             assertThatJson(response.getBody()).isEqualTo(expected);
         }
@@ -104,7 +97,7 @@ public class WordControllerTest extends AbstractMongoDbTest {
         Word w = new Word("home", WordCategory.NOUN);
         ResponseEntity<String> response = putWord(w);
 
-        String expected = "{\"word\":\"home\",\"category\":\"NOUN\"}";
+        String expected = "{\"word\":\"home\",\"category\":\"NOUN\",\"href\":\"api/words/home\"}";
         assertThatJson(response.getBody()).isEqualTo(expected);
     }
 
@@ -128,7 +121,8 @@ public class WordControllerTest extends AbstractMongoDbTest {
                 createURLWithPort(),
                 HttpMethod.GET, entity, String.class);
 
-        String expected = "[\"home\",\"and\",\"to\"]";
+        String expected = "[{\"href\":\"api/words/home\",\"word\":\"home\"}," +
+                "{\"href\":\"api/words/and\",\"word\":\"and\"},{\"href\":\"api/words/to\",\"word\":\"to\"}]";
         assertThatJson(response.getBody()).isEqualTo(expected);
     }
 

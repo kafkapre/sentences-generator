@@ -46,9 +46,9 @@ public class WordController {
     }
 
     @GET
-    public List<String> getAllWords() {
-        List<Word> words = wordDAL.getAllWords();  // TODO better
-        return words.stream().map(w -> w.getText()).collect(Collectors.toList());
+    public List<Word> getAllWords() {
+        List<Word> words = wordDAL.getAllWords();
+        return words;
     }
 
     @GET

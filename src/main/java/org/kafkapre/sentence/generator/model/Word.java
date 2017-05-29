@@ -1,22 +1,40 @@
 package org.kafkapre.sentence.generator.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import static org.kafkapre.sentence.generator.controller.RestPaths.rootPath;
+import static org.kafkapre.sentence.generator.controller.RestPaths.wordPath;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Word {
 
-    @JsonProperty("word" )
+    private static final String path = rootPath + wordPath + "/";
+
+    @JsonProperty("word")
     private String text;
 
     @JsonProperty
     private WordCategory category;
 
+    //    @JsonProperty
+//    @JsonProperty (access = JsonProperty.Access.WRITE_ONLY)
+    @JsonIgnore // (access = JsonProperty.Access.WRITE_ONLY) - bug: does not work, so there is workaround @JsonIgnore on property which is not
+    private String href;
+
     // TODO add href
 
-    Word(){
+    Word() {
     }
 
-    public Word(String text, WordCategory category){
+    public Word(String text) {
+        this.text = text;
+        this.category = null;
+    }
+
+    public Word(String text, WordCategory category) {
         this.text = text;
         this.category = category;
     }
@@ -30,13 +48,26 @@ public class Word {
         this.text = text;
     }
 
+
     public WordCategory getCategory() {
         return category;
     }
 
-//    public void setCategory(WordCategory category) {
-//        this.category = category;
-//    }
+
+    public void setCategory(WordCategory category) {
+        this.category = category;
+    }
+
+
+    @JsonProperty // (access = JsonProperty.Access.WRITE_ONLY) - bug: does not work, so there is workaround @JsonIgnore on property which is not
+    public String getHref() {
+        return path + text;
+    }
+
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    void setHref(String href) { // package private
+        // do nothing
+    }
 
     @Override
     public String toString() {

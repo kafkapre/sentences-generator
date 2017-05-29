@@ -3,7 +3,6 @@ package org.kafkapre.sentence.generator.persistence.impl;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +13,7 @@ import org.kafkapre.sentence.generator.persistence.api.WordDAL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kafkapre.sentence.generator.model.WordCategory.ADJECTIVE;
@@ -135,16 +135,25 @@ public class MongoWordDALTest extends AbstractMongoDbTest {
     @Test
     public void getAllWords() throws Exception {
         List<Word> stored = storeWords(20);
+        List<Word> expected = stored.stream().map(w -> new Word(w.getText())).collect(Collectors.toList());
 
         List<Word> actual = client.getAllWords();
-        assertThat(actual).containsAll(stored);
+        assertThat(actual).containsAll(expected);
     }
 
     private List<Word> storeWords(int count) {
+        return storeWords(count, false);
+    }
+
+    private List<Word> storeWords(int count,boolean withoutCategory) {
         List<Word> words = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            WordCategory c = (i % 2 == 0) ? ADJECTIVE : VERB;
-            words.add(new Word("w" + i, c));
+            if(withoutCategory){
+                words.add(new Word("w" + i));
+            }else {
+                WordCategory c = (i % 2 == 0) ? ADJECTIVE : VERB;
+                words.add(new Word("w" + i, c));
+            }
         }
         words.forEach(w -> client.putWord(w));
         return words;

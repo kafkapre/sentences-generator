@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.fields;
+import static com.mongodb.client.model.Projections.include;
 
 public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
 
@@ -87,8 +89,8 @@ public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
     @Override
     public List<Word> getAllWords() {
         List<Word> list = new ArrayList<>();
-        collection.find().forEach((Block<Document>) document -> {
-            list.add(buildWord(document));
+        collection.find().projection(fields(include(textKey))).forEach((Block<Document>) document -> {
+            list.add(buildSimpleWord(document));
         });
         return list;
     }
@@ -100,6 +102,14 @@ public class MongoWordDAL extends AbstractMongoDAL implements WordDAL {
         String text = (String) doc.get(textKey);
         WordCategory category = WordCategory.valueOf((String) doc.get(categoryKey));
         return new Word(text, category);
+    }
+
+    private Word buildSimpleWord(Document doc) {
+        if (doc == null) {
+            return null;
+        }
+        String text = (String) doc.get(textKey);
+        return new Word(text);
     }
 
 }
