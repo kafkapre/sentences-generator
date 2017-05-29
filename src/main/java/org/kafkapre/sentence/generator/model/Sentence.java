@@ -33,11 +33,6 @@ public class Sentence extends BaseSentence {
         return showDisplayCount;
     }
 
-//    public void setShowDisplayCount(long showDisplayCount) {
-//        this.showDisplayCount = showDisplayCount;
-//    }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -59,7 +54,6 @@ public class Sentence extends BaseSentence {
             return false;
         }
         return words != null ? words.equals(sentence.words) : sentence.words == null;
-
     }
 
     @Override
