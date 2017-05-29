@@ -11,6 +11,8 @@ public class Word {
     @JsonProperty
     private WordCategory category;
 
+    // TODO add href
+
     Word(){
     }
 

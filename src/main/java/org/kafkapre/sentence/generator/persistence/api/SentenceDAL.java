@@ -1,8 +1,8 @@
 package org.kafkapre.sentence.generator.persistence.api;
 
 import org.bson.types.ObjectId;
+import org.kafkapre.sentence.generator.model.BaseSentence;
 import org.kafkapre.sentence.generator.model.Sentence;
-import org.kafkapre.sentence.generator.model.Word;
 import org.kafkapre.sentence.generator.model.Words;
 
 import java.util.List;
@@ -13,9 +13,10 @@ public interface SentenceDAL {
 
     Sentence createAndStoreSentence(Words words);
     boolean incrementSentenceShowDisplayCount(ObjectId id);
+    boolean incrementSentenceSameGeneratedCount(ObjectId id);
     Optional<Sentence> getSentence(ObjectId id);
     List<Sentence> getSentences(int hash);
-    List<Sentence> getSentences(int hash, Words words);
-    List<Sentence> getAllSentences();
+    List<Sentence> getSentences(Words words);
+    List<BaseSentence> getAllBaseSentences();
 
 }

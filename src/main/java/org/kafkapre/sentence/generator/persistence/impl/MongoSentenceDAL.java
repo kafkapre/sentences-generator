@@ -7,6 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.kafkapre.sentence.generator.model.BaseSentence;
 import org.kafkapre.sentence.generator.model.Sentence;
 import org.kafkapre.sentence.generator.model.Word;
 import org.kafkapre.sentence.generator.model.Words;
@@ -18,6 +19,8 @@ import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Projections.fields;
+import static com.mongodb.client.model.Projections.include;
 import static com.mongodb.client.model.Updates.inc;
 
 public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
@@ -30,6 +33,7 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
     static final String verbKey = "verb";
     static final String adjectiveKey = "adjective";
     static final String showDisplayCountKey = "count";
+    static final String sameGeneratedCountKey = "sameGeneratedCount";
 
     public MongoSentenceDAL(MongoClient mongoClient) {
         super(mongoClient);
@@ -53,16 +57,23 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
                 .append(nounKey, words.getNoun())
                 .append(verbKey, words.getVerb())
                 .append(adjectiveKey, words.getAdjective())
-                .append(showDisplayCountKey, 0L);
+                .append(showDisplayCountKey, 0L)
+                .append(sameGeneratedCountKey, 1L);
         collection.insertOne(document);
 
-        ObjectId id = document.getObjectId(idKey);
         return buildSentence(document);
     }
 
     @Override
     public boolean incrementSentenceShowDisplayCount(ObjectId id) {
         long modifiedCount = collection.updateOne(eq(idKey, id), inc(showDisplayCountKey, 1))
+                .getModifiedCount();
+        return (modifiedCount != 0);
+    }
+
+    @Override
+    public boolean incrementSentenceSameGeneratedCount(ObjectId id) {
+        long modifiedCount = collection.updateOne(eq(idKey, id), inc(sameGeneratedCountKey, 1))
                 .getModifiedCount();
         return (modifiedCount != 0);
     }
@@ -84,9 +95,9 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
     }
 
     @Override
-    public List<Sentence> getSentences(int hash, Words words) {
+    public List<Sentence> getSentences(Words words) {
         List<Sentence> list = new ArrayList<>();
-        collection.find(and(eq(hashKey, hash),
+        collection.find(and(eq(hashKey, words.hashCode()),
                 eq(nounKey, words.getNoun()),
                 eq(verbKey, words.getVerb()),
                 eq(adjectiveKey, words.getAdjective()
@@ -97,10 +108,11 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
     }
 
     @Override
-    public List<Sentence> getAllSentences() {
-        List<Sentence> list = new ArrayList<>();
-        collection.find().forEach((Block<Document>) document -> {
-            list.add(buildSentence(document));
+    public List<BaseSentence> getAllBaseSentences() {
+        List<BaseSentence> list = new ArrayList<>();
+        collection.find().projection(fields(include(idKey, nounKey, verbKey, adjectiveKey)))
+                .forEach((Block<Document>) document -> {
+            list.add(buildBasicSentence(document));
         });
         return list;
     }
@@ -113,15 +125,22 @@ public class MongoSentenceDAL extends AbstractMongoDAL implements SentenceDAL {
         String noun = doc.getString(nounKey);
         String verb = doc.getString(verbKey);
         String adjective = doc.getString(adjectiveKey);
-        long count = doc.getLong(showDisplayCountKey);
+        long showDisplayCount = doc.getLong(showDisplayCountKey);
+        long sameGeneratedCount = doc.getLong(sameGeneratedCountKey);
         Words words = new Words(noun, verb, adjective);
-        return new Sentence(id, words, count);
+        return new Sentence(id, words, showDisplayCount, sameGeneratedCount);
     }
 
-    public static int computeTextHash(String adjective, String nounWithVerb) {
-        int result = adjective != null ? adjective.hashCode() : 0;
-        result = 31 * result + (nounWithVerb != null ? nounWithVerb.hashCode() : 0);
-        return result;
+    private BaseSentence buildBasicSentence(Document doc) {
+        if (doc == null) {
+            return null;
+        }
+        ObjectId id = doc.getObjectId(idKey);
+        String noun = doc.getString(nounKey);
+        String verb = doc.getString(verbKey);
+        String adjective = doc.getString(adjectiveKey);
+        Words words = new Words(noun, verb, adjective);
+        return new BaseSentence(id, words);
     }
 
 }

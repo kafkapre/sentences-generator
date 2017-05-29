@@ -29,7 +29,7 @@ public class Words {
         }
     }
 
-    public void validate(){
+    public void validate() {
         Validate.notBlank(noun, "Noun is missing.");
         Validate.notBlank(verb, "Verb is missing.");
         Validate.notBlank(adjective, "Adjective is missing.");

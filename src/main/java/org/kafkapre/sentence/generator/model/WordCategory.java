@@ -5,4 +5,5 @@ public enum WordCategory {
     NOUN,
     VERB,
     ADJECTIVE;
+
 }

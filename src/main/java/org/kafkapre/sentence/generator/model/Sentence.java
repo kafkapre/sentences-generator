@@ -4,50 +4,35 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.Validate;
 import org.bson.types.ObjectId;
 
-public class Sentence {
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    class SentenceJSON {
+import static org.kafkapre.sentence.generator.controller.RestPaths.rootPath;
+import static org.kafkapre.sentence.generator.controller.RestPaths.sentencesPath;
 
-        private final String text;
-        private final Long showDisplayCount;
+public class Sentence extends BaseSentence {
 
-        SentenceJSON(String text, Long showDisplayCount){
-            this.text = text;
-            this.showDisplayCount = showDisplayCount;
-        }
 
-    }
 
-    private final ObjectId id;
-    private final Words words;
-    private final long showDisplayCount;
+    private final Long showDisplayCount;
+    private final Long sameGeneratedCount;
 
-    public Sentence(ObjectId id, Words words, long showDisplayCount){
-        Validate.notNull(id);
-        Validate.notNull(words);
 
-        this.id = id;
-        this.words = words;
+    public Sentence(ObjectId id, Words words, Long showDisplayCount,
+                    Long sameGeneratedCount) {
+        super(id, words);
+
         this.showDisplayCount = showDisplayCount;
-    }
-
-    public ObjectId getId() {
-        return id;
-    }
-
-    public Words getWords() {
-        return words;
+        this.sameGeneratedCount = sameGeneratedCount;
     }
 
     public SentenceJSON generateSentenceJSON() {
         String text = words.getNoun() + " " + words.getVerb() + " " + words.getAdjective();
-        return new SentenceJSON(text, showDisplayCount);
+        Long _sameGeneratedCount = (sameGeneratedCount > 1L) ? sameGeneratedCount : null;
+        return new SentenceJSON(id, text, showDisplayCount, _sameGeneratedCount, id.getTimestamp());
     }
 
     public SentenceJSON generateYodaSentenceJSON() {
         String text = words.getNoun() + " " + words.getVerb() + " " + words.getAdjective();
-        return new SentenceJSON(text, null);
+        return new SentenceJSON(id, text, null, null, null);
     }
 
     public long getShowDisplayCount() {
@@ -73,6 +58,9 @@ public class Sentence {
         if (showDisplayCount != sentence.showDisplayCount) {
             return false;
         }
+        if (sameGeneratedCount != sentence.sameGeneratedCount) {
+            return false;
+        }
         if (id != null ? !id.equals(sentence.id) : sentence.id != null) {
             return false;
         }
@@ -85,6 +73,7 @@ public class Sentence {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (words != null ? words.hashCode() : 0);
         result = 31 * result + (int) (showDisplayCount ^ (showDisplayCount >>> 32));
+        result = 31 * result + (int) (sameGeneratedCount ^ (sameGeneratedCount >>> 32));
         return result;
     }
 }

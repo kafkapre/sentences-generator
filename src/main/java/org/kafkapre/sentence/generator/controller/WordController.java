@@ -74,6 +74,7 @@ public class WordController {
     public Response putWord(@PathParam("id") String id, Word word) {
         System.out.println(word);
         System.out.println(configuration.getRejectedWords().contains(id));
+        // TODO check what happen when word cannot be parsed.
 
         if (!configuration.getRejectedWords().contains(id)) {
             word.setText(id);
