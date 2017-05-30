@@ -141,9 +141,9 @@ Response statuses:
 ```
 
 
-#### Words endpoint
+#### Sentences endpoint
 
-##### GET /sentences
+##### GET /api/sentences
 Returns all generated sentences.
 
 ```
@@ -156,7 +156,7 @@ Returns all generated sentences.
 ]
 ```
 
-##### GET /sentences/{sentenceID}
+##### GET /api/sentences/{sentenceID}
 Returns particular generated sentence.
 
 ```
@@ -169,7 +169,7 @@ Returns particular generated sentence.
 }
 ```
 
-##### GET /sentences/{sentenceID}/yodaTalk
+##### GET /api/sentences/{sentenceID}/yodaTalk
 Returns particular generated sentence in yoda talk format.
 
 ```
@@ -181,7 +181,7 @@ Returns particular generated sentence in yoda talk format.
 ```
 
 
-##### POST /sentences/generate (call without request body)
+##### POST /api/sentences/generate (call without request body)
 Generates random sentence.
 
 Response statuses:
