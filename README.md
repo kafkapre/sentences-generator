@@ -64,19 +64,6 @@ app:
 
 ### Rest API
 
-#### Root endpoint
-
-##### GET /api
-Returns root api paths.
-
-```
-{
-    "wordsPath":"/words",
-    "sentencesPath":"/sentences"
-}
-```
-
-
 #### Words endpoint
 
 ##### GET /api/words
